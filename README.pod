@@ -10,13 +10,14 @@ Este documento ainda está em desenvolvimento.
 
 =head2 RESUMO
 
-Ha muito tempo tenho vontade de criar um tutorial para ajudar o pessoal que está aprendendo ou quer aprender mais sobre a linguagem.
-Então fiz este tutorial para os brasileiros e falantes da lingua portuguesa de plantão interessados em aprender a linguagem de programação perl.
-A intenção é cobrir temas genéricos e relevantes para programação com perl.
-Como o assunto não é simples, contribuições de imediato são bem vindas para ajudar a melhorar o material. Adicione seu nome na área de "Colaboradores" caso decida colaborar.
-A parte mais legal de escrever este tutorial é a oportunidade que tenho de re-ler conceitos através do perldoc
+=cut
+#   Ha muito tempo tenho vontade de criar um tutorial para ajudar o pessoal que está aprendendo ou quer aprender mais sobre a linguagem.
+#   Então fiz este tutorial para os brasileiros e falantes da lingua portuguesa de plantão interessados em aprender a linguagem de programação perl.
+#   A intenção é cobrir temas genéricos e relevantes para programação com perl.
+#   Como o assunto não é simples, contribuições de imediato são bem vindas para ajudar a melhorar o material. Adicione seu nome na área de "Colaboradores" caso decida colaborar.
+#   A parte mais legal de escrever este tutorial é a oportunidade que tenho de re-ler conceitos através do perldoc
 
-A idéia deste tutorial é oferecer um formato de leitura rápida e rápido entendimento para quem está aprendendo.
+#   A idéia deste tutorial é oferecer um formato de leitura rápida e rápido entendimento para quem está aprendendo.
 
 =head2 Instalação do perl
 
