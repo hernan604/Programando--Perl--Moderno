@@ -1,0 +1,882 @@
+=encoding utf8
+use strict;
+use warnings;
+
+=head1 PROGRAMANDO PERL MODERNO - PARA INICIANTES
+
+=head2 AVISO
+
+Este documento ainda está em desenvolvimento.
+
+=head2 RESUMO
+
+Ha muito tempo tenho vontade de criar um tutorial para ajudar o pessoal que está aprendendo ou quer aprender mais sobre a linguagem.
+Então fiz este tutorial para os brasileiros e falantes da lingua portuguesa de plantão interessados em aprender a linguagem de programação perl.
+A intenção é cobrir temas genéricos e relevantes para programação com perl.
+Como o assunto não é simples, contribuições de imediato são bem vindas para ajudar a melhorar o material. Adicione seu nome na área de "Colaboradores" caso decida colaborar.
+A parte mais legal de escrever este tutorial é a oportunidade que tenho de re-ler conceitos através do perldoc
+
+A idéia deste tutorial é oferecer um formato de leitura rápida e rápido entendimento para quem está aprendendo.
+
+=head2 Instalação do perl
+
+É imporante ressaltar que algumas máquinas linux, mac e bsd vem com um perl instalado por padrão. Esse perl é utilizado pela máquina para gerenciar N coisas e não é recomendável mexer nele pois sua máquina depende dele assim como suas aplicações. Para não gerar conflito de desinstalações e evitar quebras ou uso de root, recomanda-se a instalação de uma versão local, que fica dentro do diretório do seu usuário. Com essa configuração de perl local é possível instalar módulos sem a necessidade de usuário root. Isso tambem é importante pois separa bem quais usuários executam e tem acesso a quais partes do sistema.
+
+Para verificar se tem perl na máquina, digite:
+
+  $ perl -v
+
+=head3 perlbrew
+
+Primeiro você verifica se tem alguma versão perl já instalada no sistema:
+
+  $ perl -v
+
+Agora sim, instale o perlbrew:
+
+  $ curl -L http://install.perlbrew.pl | bash
+
+  $ source ~/perl5/perlbrew/etc/bashrc
+
+  $ perlbrew available
+
+  $ perlbrew -j 8 install 5.19.1        # use 8 threads para compilar
+
+Após finalizar a instalação, altere a versão para a que você instalou:
+
+  $ perlbrew switch 5.19.1
+
+e verifique a versão:
+
+  $ perl -v
+
+Depois instale o cpanm. É com o cpanm que se instala módulos perl.
+
+  $ perlbrew install-cpanm
+
+E para instalar módulos com o cpanm:
+
+  $ cpanm Nome::Modulo1 Modulo2::Etc
+
+=head3 local::lib
+
+O local::lib é uma alternativa ao perlbrew. Bastante utilizada.
+
+  #TODO
+
+=head2 Módulos perl
+
+Uma caracteristíca da linguagem perl é o ecosistema que foi formado ao longo dos anos. Primeiro veio o CPAN onde foi possível compartilhar os módulos. Após isso foram sendo adicionadas mais e mais facilidades e assim foi formado o ecossistema perl que hoje contempla:
+
+  cpan            #repositório oficial
+  irc             #salas de bate papo para acesso direto aos desenvolvedores no mundo todo
+  documentação    #o cpan tem excelentes documentações junto aos módulos
+  testes          #muitas aplicações tem testes. Alem de servir como testes, serve como referência de uso das apps
+  request tracker #o request tracker RT do cpan é um produto usado pelas maiores empresas do mundo, incluindo a NASA
+
+=head3 PAUSE
+
+O PAUSE é nome do sistema onde são enviados os módulos. Todos os módulos que entram no CPAN passam pelo PAUSE.
+
+  http://pause.perl.org/
+
+=head3 CPAN - O repositório oficial
+
+O cpan é o repositório oficial no mundo perl. fica em www.cpan.org ou search.cpan.org. Lá você digita o termo e confere os módulos que solucionam essa tarefa.
+
+Você pode digitar "google", "twitter","excel","json" para ter uma listagem de módulos relacionados à busca.
+
+Existe um módulo chamado Task::Kensho que foi criado para servir de referência sobre quais os melhores módulos para determinadas tarefas. O módulo Task::Kensho serve como link para outros módulos que já estão 'reconhecidos' como sendo os mais indicados. O Task::Kensho pode ser encontrado em:
+
+  https://metacpan.org/pod/Task::Kensho
+
+Veja alguns exemplos de modulos no cpan:
+
+  https://metacpan.org/pod/Mango
+  https://metacpan.org/pod/Mojolicious::Guides
+  https://metacpan.org/pod/release/ETHER/Catalyst-Manual-5.9007/lib/Catalyst/Manual/Tutorial.pod
+  https://metacpan.org/pod/release/YANICK/Dancer-1.3120/script/dancer
+  https://metacpan.org/pod/Net::Twitter
+  https://metacpan.org/pod/WWW::YouTube::Download
+  https://metacpan.org/pod/Spreadsheet::WriteExcel
+
+=head3 Documentação
+
+Documentação é levada bem a sério no cpan. Existe alguns padrões mínimos a serem seguidos, por exemplo, todos os módulos perl tem no mínimo os seguintes itens em sua documentação:
+
+  SYNOPSIS      #exemplo rápido de uso
+  DESCRIPTION   #descrição detalhada
+  AUTHOR        #informações para contactar o autor
+  LICENSE       #informações da licensa
+
+Isso é bacana pois ao procurar um módulo, é certo que dá pra ter uma noção do seu uso já na 'synopse'.
+
+=head3 Código fonte
+
+É possível baixar e visualizar o código fonte. O link de download indica um arquivo.tar.gz que é o fonte do módulo em si. No entanto tambem é possível visualizar os códigos fonte clicando em 'source', ex:
+
+  https://metacpan.org/source/MMIMS/Net-Twitter-4.01002/lib/Net/Twitter.pm
+
+=head3 Testes
+
+Os testes são levados bastante a sério no desenvolvimento de módulos perl que estão no cpan. São os testes bem feitos que vão garantir que determinado módulo continua funcionando ou quebrou.
+
+A execução de-facto é realizada por pessoas e empresas com cluster de computadores que utilizam um módulo de "framework de smoke test" que agilizam o teste em massa de módulos enviados ao cpan. Isto que dizer que todo módulo que é enviado ao cpan é testado nas mais diversas plataformas (win/linux/bsd/etc) e nas mais diversas versões perl. Assim que um teste é executado, em caso de erro um LOG é enviado por email ao desenvolvedor. É um log igual ao que o desenvolvedor teria se estivesse sentado e executase a aplicação na máquina do teste. Então o LOG pode ser analisado e o problema pode ser corrigido. Feito isso é possível gerar uma nova release e subir novamente ao cpan, e verificar se o problema foi solucionado.
+
+Então isso facilita muito pois você precisa criar os testes, executar e fazer eles passarem na sua máquina. Ao subir o módulo no cpan, os testers tem framework automatizado para testar sua app em outras plataformas, ai você recebe os logs por email em caso de erro, arruma e sobe uma nova versão. Se o problema for em uma versão distinta à que em instalada em sua máquina, você pode usar o perlbrew e instalar a versão que deu pau para tentar simular o erro localmente e encontrar soluções.
+
+Tendo em vista que os framework de testes automatizam para todas as versões de perl e plataformas, isto quer dizer que ao sair uma nova versão do perl, seu módulo é testado automaticamente. E se tiver problemas, será enviado o LOG.
+
+Tudo isso pode ser encontrado através de links dentro de um módulo no cpan e metacpan.
+
+Veja exemplo de matriz de testes, é possível ver a versão perl e plataforma. E, na coluna esquerda é possível ver um resumo da evolução e versão dos módulos.
+
+  http://www.cpantesters.org/distro/N/Net-Twitter.html#Net-Twitter-4.01002?oncpan=1&distmat=1
+  http://www.cpantesters.org/distro/M/Mojolicious.html#Mojolicious-4.72?oncpan=1&distmat=1
+  http://www.cpantesters.org/distro/D/Dancer.html#Dancer-1.3120?oncpan=1&distmat=1
+  http://www.cpantesters.org/distro/S/Spreadsheet-ParseExcel-Simple.html#Spreadsheet-ParseExcel-Simple-1.04?oncpan=1&distmat=1
+
+Existe até um ranking para saber quem testou mais módulos:
+
+    http://stats.cpantesters.org/testers.html
+
+Além de um contador ao vivo:
+
+    http://stats.cpantesters.org/
+
+=head3 Autores dos módulos
+
+No cpan, junto aos módulos é possivel encontrar dados para entrar em contato com o responsável pelo módulo. Normalmente tem email e nome, github, etc.
+
+Se um dia estiver desenvolvendo e precisar de uma customização, suporte ou melhoria em módulo, pode entrar em contato direto e contratar os serviçoes.
+
+=head3 RT - Request Tracker
+
+Todos os autores de módulo tem à disposição o RT, para registrar e solucionar bugs nos módulos.
+
+RT: http://www.bestpractical.com/rt/who.html
+
+=head3 IRC - chat com os desenvolvedores
+
+Existem salas de batepapo em um servidor oficial perl. Para acessar, é necessário conectar no servidor IRC abaixo através dos apps mibbit, mIRC, xchat, irssi, pidgin, entre outros.
+
+  irc.perl.org
+
+Os módulos mais usados tem salas de batepapo bastante ativas com umas 300 pessoas e são discutidas soluções. Tambem rola muita ajudas.
+
+O ponto bacana é a facilidade do contato direto com os criadores dos mais diversos módulos/frameworks e até desenvolvedores da linguagem perl.
+
+=head3 Metacpan
+
+Metacpan é um cpan com cara mais nova. Ele foi criado para ser uma alternativa ao cpan oficial. O metacpan tambem é open source, no entanto este utiliza Elastic::Search para realizar as buscas instantâneas. Outro ponto bacana sobre o metacpan é a possibilidade de forkar o projeto e contribuir com plugins e perfumaria para o site.
+
+=head2 Ajuda
+
+As instalações perl inclúem por padrão o perldoc, que nos ajuda como referência e manual de uso.
+Através dele é possível visualizar os manuais de módulos e funções. É similar ao comando "man", e sempre é possível executar um "man Nome::Modulo"
+
+Exemplo para ler os manuais de pragmas internos do perl:
+
+$ perldoc pragma
+$ perldoc strict
+$ perldoc warnings
+
+Exemplo para ler manual de um módulo:
+
+$ perldoc Some::Module
+
+Exemplo para ler o manual das funções internas:
+
+$ perldoc -f sort
+$ perldoc -f qw
+$ perldoc -f push
+$ perldoc -f shift
+
+Embora a leitura seja pesada, tem bastante coisa útil dentro desses manuais. Talvez não tanto para principiantes, mas é sempre bom se acostumar a usar o perldoc como referência na hora de usar um comando, ou, módulo.
+E aos poucos o seu uso torna-se natural.
+
+Não menos importante, no irc.perl.org tambem é possível obter ajuda.
+
+=head2 Execução de um script perl
+
+Para executar o script perl , você vai ter que abrir um terminal e ir até o diretório onde se encontra seu script. Caso esteja numa máquina windows, o linux é bastante recomendável pois agiliza bem o desenvolvimento com perl.
+
+O jeito mais direto é assim:
+
+    cd /home/usuario/script/
+    perl meu_script.pl
+
+Isso quer dizer que ele vai apenas chamar seu script e executar.
+
+Existem outras opções ótimas para desenvolvedores, que possibilitam usar versões especificas de módulos que o script esteja usando. Ou seja, supondo que 'meu_script.pl' vai usar o módulo Modulo::XYZ, no caso assima seria usada a versão que está instalada junto com minha versão de perl atual.
+
+No entanto eu posso indicar um diretório onde esse módulo está, utilizando o argumento -I../diretorio/modulo/lib (i maiúscilo seguido do diretorio/lib ) assim:
+
+    cd /home/usuario/script
+    perl -I/Downloads/Modulo-XYZ/lib/ meu_script.pl
+
+Isso fara seu script usar o Modulo::XYZ do diretório indicado: /Downloads/Modulo-XYZ/lib/ ao invés do que está instalado junto com seu perl.
+
+Isso é bastante útil na hora de debugar algum módulo externo. E tambem para usar módulos fazendo apenas o download e indicando o diterório do modulo/lib. Ou seja, não necessariamente precisaria instalar o módulo... eu posso indicar o local do módulo em tempo de execução. Para a aplicação é transparente.
+
+=head2 Variáveis de ambiente
+
+As variáveis de ambiente podem ser acessadas através da variável $ENV{"PATH"}
+
+=head2 Escopo de variável
+
+Os escopos estão presos aos {} e às 'sub {}'. Ou seja , blocos de código e métodos. Veja os exemplos de uma linha
+
+    $ perl -e '{my $a = 10; warn $a; } warn $a '
+    #saida
+    10 at -e line 1.
+    Warning: something's wrong at -e line 1.
+
+
+    $ perl -e ' my $a = 20; { my $a = 10; warn $a; } warn $a '
+    #saida
+    10 at -e line 1.
+    20 at -e line 1.
+
+
+    $ perl -e ' my $a = 20; { my $a = 10; warn $a; } warn $a; sub { my $a = 30; warn $a; }->() ; warn $a;'
+    #saida
+    10 at -e line 1.
+    20 at -e line 1.
+    30 at -e line 1.
+    20 at -e line 1.
+
+
+    $ perl -e ' my $a = 20; { my $a = 10; warn $a; { my $a = 40; warn $a; } warn $a } warn $a '
+    #saida
+    10 at -e line 1.
+    40 at -e line 1.
+    10 at -e line 1.
+    20 at -e line 1.
+
+=head2 Métodos
+
+Em perl, métodos são chamados 'subrotina' ou 'sub'. perldoc -f sub
+Todos os métodos perl são reconhecidos através da definição de subrotina 'sub' ex:
+
+    sub set_nome {
+        my ( $nome ) = @_;
+    }
+
+Métodos com orientação a objeto recebem o $self como primeiro argumento. $self é a referência para o próprio objeto. É como o this no javascript
+
+    sub set_nome {
+        my ( $self, $nome ) = @_;
+    }
+
+Os argumentos sempre chegam no @_.
+Você não passa o $self, ele é passado automaticamente para você sempre que trabalha com orientação a objetos.
+Eu poderia chamar tanto o primeiro quanto o segundo método da segunte maneira:
+
+    $pessoa->set_nome( "Bla" )
+
+e $nome teria valor de "Bla"
+
+Se eu quiser ter mais argumentos posso fazer:
+
+    sub set_coisas {
+        my ( $self, $coisa1, $coisa2, $coisa3 ) = @_;
+    }
+
+    $pessoa->set_coisas( 'item1', "item2", 3 );
+    # $coisa1 = 'item1'
+    # $coisa2 = 'item2'
+    # $coisa3 = 3
+
+Se eu quiser posso executar uma sub anonima:
+
+    sub { my ( $arg1, $arg2 ) = @_; .......  }->( "Argumento1", "Coisa2" )
+
+ou, atribuir a subrotina em uma variável e executar ela depois, ex:
+
+    my $pular = sub { warn "pular" };
+    $pular->();
+
+Passando métodos como argumentos:
+
+    my $callback_send_msg = sub {
+        my ( $msg ) = @_;
+        warn $msg
+    };
+
+e uma chamada de um objeto '$item' co método faca_algo
+
+    $item->faca_algo( "arg1", "arg2", $callback_send_msg );
+
+    and then inside the 'faca_algo' method:
+
+    sub faca_algo {
+        my ( $arg1, $arg2, $callback ) = @_;
+        ...
+        $callback->( "Código executado com sucesso." );
+    }
+
+=head2 Variáveis
+
+Por padrão todas as variáveis começam com $ e devem ser declaradas com 'my'. ex:
+
+    my $variavel    = "algo";
+    my $var2        = 1;
+    my $array       = [ 1,2,3,"quatro" ];
+    my $carro       = Carro->new();
+    my @list        = ("aa","bb",1,2,3);
+    my %hash        = (nome=>"jão",idade=>"dimenor");
+
+=head3 Tipos de variáveis / Estrutura de dados:
+
+    my $var         = [1, 2, 3];
+    my $var         = Some::Module->new();
+    my @list        = ("nome","jão");
+    my %hash        = @list;
+
+=head2 scalar
+
+Variáveis scalares podem ser números, strings ou referências para outras variáveis. A variável escalar é sempre uma única coisa e pode ser passada como argumento como uma única coisa.
+
+Uma variável scalar sempre começa com $, ex:
+
+    $texto = ""
+
+=head3 array e listas
+
+Um array, ou, lista de coisas, pode ser declarada com um array scalar, ou uma lista.
+
+array scalar:
+
+    $meu_array = [
+        "coisa1",
+        "coisa2"
+    ]
+
+lista:
+
+    @minha_lista = (
+        "coisa1",
+        "coisa2"
+    );
+
+Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opção chamada "qw" que coloca os as aspas automaticamente. Mas só funciona para palavras sem 'traço' ou espaços. ex:
+
+    @lista = (  qw|item1 item2 item3|  );    #é a mesma coisa que @lista = ( 'item1', 'item2', 'item3' );
+
+Ambos funcionam de maneira similar, parecem, mas não são a mesma coisa.
+
+Lembre-se, um scalar é sempre uma coisa apenas. E a lista pode ser mais de uma coisa.
+
+Então por exemplo, se eu chamar um método e passar minha lista para esse método, o que acontece ?
+
+    my @l=(qw|aa bb cc|);
+    my $test = sub {                            # sub é tipo function no javascript. é declaração de método. neste caso joguei o método na variável $test
+        my ( $um, $dois, $tres ) = @_ ;
+        warn $um;
+        warn $dois;
+        warn $tres;
+    } ;
+    $test->( @l ); # chamada passando a lista
+
+saida: cada item da lista caiu como um argumento.
+
+    aa at -e line 1.
+    bb at -e line 1.
+    cc at -e line 1.
+
+Agora, ao invés de passar a lista, vou passar um array
+
+    my $l=[qw|aa bb cc|];
+    my $test = sub {
+    my ( $um, $dois, $tres ) = @_ ;
+        warn $um;
+        warn $dois;
+        warn $tres;
+    } ;
+    $test->( $l );
+
+    #saída
+    ARRAY(0x94d4068) at -e line 1.           # recebeu o array no primeiro argumento, pois array é apenas uma coisa.
+    Warning: something's wrong at -e line 1. # não recebeu nada no segundo argumento
+    Warning: something's wrong at -e line 1. # não recebeu nada no terceiro argumento
+
+* observe tambem o argumentos: my ($um,$dois,$tres) .. eles tambem são uma lista. Ou seja, my (...) = @_; assim como @lista = (...);
+
+Para saber o tamanho de uma lista:
+
+    my @lista = ( 1,2,3 );
+    my $tamanho = @lista;
+    warn $tamanho; #3
+
+    ou $tamanho = scalar @lista;
+
+e para arrays:
+
+    my $lista = [ 1,2,3 ];
+    length $lista; #3
+
+=head3 De-referenciando
+
+Ao passar uma lista por referencia ela é transformada em ARRAY(scalar) para ser recebida apenas como 1 único argumento. E para transformá-la em lista novamente é necessário fazer uma de-referencia.. que funciona da seguinte maneira:
+
+    my @lista = ( qw| item1 item2 item3 | );
+    $algo->passar( \@lista, "outra coisa" ); #passou @lista por referencia
+
+e por sua vez o método passar recebe:
+
+    sub passar {
+        my ( $lista, $outra_coisa ) = @_;
+        use DDP;
+        warn p $lista;
+        warn ref $lista;            #ARRAY
+        my @lista = @{  $lista  };  # Aqui é feita a de-referência de scalar array para lista
+        warn p @lista;
+    }
+
+E, se tentar fazer:
+
+    warn ref @lista;
+
+vai dar erro pois @lista são várias coisas. assim como %hash; Enquanto variáveis scalares são apenas uma única coisa.
+
+=head3 hash e lista associativa
+
+Hashes tambem podem ser definidos com scalares ou listas ordenadas.
+
+hash scalar:
+
+    my $item = {
+        nome    => "jão",
+        idade   => "dimenor"
+    };
+
+hash com lista ordenada:
+
+    my %item = (
+        nome    => "jão",
+        idade   => "dimenor"
+    );
+
+Para transformar um %item em $item, é só passar a referencia (\). Ou seja,
+
+    $ perl -e 'use strict; use warnings; my %x=(aa=>1,bb=>2); my $h = \%x; use DDP; warn p $h ; warn ref $h; '
+
+Assim que se passa um hash por referência. Ou seja, se vc tem um %algo e precisa passar para um método, você terá que passar a referência disso: \%algo e na outra ponta vai chegar como scalar: $algo e esse scalar vai ser do tipo HASH. Que pode ser verificado através do comando: warn ref $algo.
+
+Para introspectar e visualizar o hash:
+
+    use DDP;
+    warn p $item;
+    wran p %item;
+
+=head3 lista, lista associativa, arrays e hashes
+
+A lista é representada por uma variávei inicializando com "@". Uma lista são items dentro de parentesis, separados por virgula. Ex.
+
+    my @lista = (
+        "nome",
+        "jão",
+        "idade",
+        "dimentor"
+    );
+
+Uma lista associativa, apenas altera o entendimento da lista e a transforma em algo parecido com um hash. Ou seja, se eu alterar a lista acima para uma lista associativa, terei o resultado:
+
+    my %lista_associativa = (
+        "nome"  => "jão",
+        "idade" => "dimentor"
+    );
+
+Ou seja, associou os itens impares com os itens pares.
+
+Tambem é possível alterar entre uma ou outra, a diferença delas esta nos @ e %. Logo é possível fazer:
+
+    my %lista = @lista; #e vice versa
+
+O % e @ vai alterar o comportamento se é aplicada lista ou array associativo. No final eles são bem similares e mudam de acorco com % ou @.
+
+=head3 coma e Fat-coma, virgula e virgula gorda
+
+Existe a virgula e a virgula-gorda. Ambas são a mesma coisa, só muda para representação visual.
+
+Vírgula / Coma
+
+    ,
+
+Vírgula-Gorda / Fat-coma
+
+    =>
+
+Se eu escrever uma lista com => ou , vai dar na mesma... mas => é bastante utilizado em hashes para indicar uma 'associação'
+
+Ou seja,
+
+    my @lista = ( 1, 2, 3 )
+
+é a mesma coisa que
+
+    my @lista = ( 1 => 2 => 3 );
+
+para fazer a prova é possível usar o Data::Printer, que permite printar o objeto na tela. ( introspection )
+
+    my @lista = ( 1, 2, 3 );     use DDP; warn p @lista;
+    my @lista = ( 1 => 2 => 3 ); use DDP; warn p @lista;
+
+=head2 Regex - Expressão Regular
+
+A linguagem perl é muito talentosa para trabalhar com textos. Por esse motivo seu engine de regex é o mais avançado entre as linguagens, e virou referência que serve como padrão de compatibilidade. O termo para isso é: PCRE ( Perl Compatible Regular Expressions ). Toda linguagem que implementa um engine de regex bom tem que ser PCRE.
+
+    $ perldoc perlre
+
+O operador de expressão regular em perl:
+
+    =~
+
+e o negador (não match)
+
+    !~
+
+É utilizado da seguinte maneira:
+
+    my $texto = "bla aa bb cc dd aa";
+    $texto =~ m/aa/gi;                  #m=match
+    $texto =~ s/isto/por aquili/gi      #s=substituição
+                                        gi são os modificadores, i é case insensitive
+                                        e g=global do começo ao final da string
+
+    $texto =~ m/(.+)algo(?<nome_do_grupo>.+)/g   #um grupo não nomeado e um grupo nomeado
+
+    print $+{nome_do_grupo}
+
+    if ( $text =~ m!bla! ) {
+        ...
+    }
+
+é possível usar exclamação, barras, colchetes na regex, ex, todas estas representam a mesma coisa:
+
+    m//g m!!g m{}g
+
+    s///g s!!!g s{}{}g
+
+Tem tudo no perlre.
+
+=head2 Pragmas
+
+Um pragma é um módulo que influencia sob alguns aspectos na hora de compilar e executar códigos perl.
+Dois pragmas muito importantes e bastante usados são o "strict e "warnings".
+Isso quer dizer que todos as apps e scripts perl devem começar com:
+
+    use strict;
+    use warnings;
+
+Para saber mais sobre pragmas, acesse o perldoc pragma
+
+    $ perldoc pragma
+
+No caso do pragma strict, verifica e valida se todas as variáveis foram declaradas. Caso alguma não tenha sido declarada, imprime um erro com o aviso na tela, ex:
+$ perl -e 'use strict; $var = "bla";'
+Global symbol "$var" requires explicit package name at -e line 1.
+Execution of -e aborted due to compilation errors.
+
+=head3 use strict
+
+Previne uso de variáveis não declaradas.
+
+    $ perldoc strict
+
+=head3 use warnings
+
+Pragma para controlar warnings opcionais
+
+    $ perldoc warnings
+
+Os pragmas funcionam e conseguem modificar apenas dentro do escopo onde foram declarados.
+
+=head2 Instalação de modulos
+
+A instalação de módulos é bastante simples. Com o nome de módulo em mãos, é possível instalar com o comando:
+
+    $ cpanm Nome::do::Modulo Nome::de::Outro::Modulo
+
+O cpanm é o instalador de módulos mais indicado hoje em dia. É super simples e fácil de usar e instalar.
+
+Se houver erro durante a instalação, será apresentado um log junto à mensagem de erro. É importante ler este log, principalmente no final, e localizar a parte onde ocorreu o erro. As vezes um módulo pode ter como pré-requisito/dependência uma lib no sistema.
+
+Por exemplo, para trabalhar com imagens, é sempre bom instalar as libs:
+
+    $ sudo apt-get install libpng-dev libgif-dev libjpeg-dev
+
+Para trabalhar com módulos xml, xpath
+
+    $ sudo apt-get install libexpat-dev
+
+Etc, se na instalação de alguma app for solicitado essas libs antes de serem instaladas, haverá um erro. Tudo estará escrito nos logs.
+
+Já as dependências de módulos, essa é automaticamente gerenciada para você. Cada módulo traz consigo uma lista de dependências, e ao instalar uma, as dependência são instaladas recursivamente automaticamente.
+
+Todos os módulos perl vem com testes, e alguns módulos mais usados as vezes tem muitos muitos testes. Testar tudo pode demorar um pouquinho. Os apressados podem usar a opção
+
+    cpanm --notest  Nome::Modulo  #só use isto se tiver certeza que usa máquina já tem os pre-requisitos instalados
+
+Outra opção é forçar uma instalação que tenha falha durante a execução dos testes.
+
+    cpanm --force   Nome::Modulo
+
+=head3 cpanm
+
+O cpanm é um instalador de módulos. Ele pode instalar módulos do cpan, ou a partir de arquivos locais, ou de qualquer url, entre outras opções avançadas. O mais comum é usar o comando para instalar um módulo do cpanm com o comando cpanm
+
+O cpanm se identifica como sendo a versão mini da app cpan (instalador padrão de módulos). Mini no sentido de ter pouco código e opções mais refinadas.
+
+    $ cpanm Modulo::Bla
+
+Para ver todas as opções
+
+    $ cpanm --help
+
+=head3 cpan
+
+O cpan é a interface oficial para interagir com o cpan. O cpan existe faz mais de 20 anos e através dela é possível instalar módulos. A primeira vez que é executado, a app pede algumas configurações. Uma das opções aceita a resposta padrão para tudo, recomendo. Feito isso é só instalar os módulos da seguinte maneira:
+
+    $ cpan Modulo::Um Modulo::Dois
+
+=head2 Criação de módulos
+
+Existem algumas ferramentas que auxiliam a criação de esqueleto de módulos. Ao mesmo tempo estas ferramentas se mantem atualizadas e criam o esqueleto seguindo os padrões corretos para a criação de um módulo perl.
+
+Um módulo perl, inclúi os arquivos fonte relacionados ao módulo, esses arquivos podem estar listados em um arquivo chamado MANIFEST. Informações sobre dependência são essenciais pois ao subir um módulo no cpan, o robozinho do smoke-tester vai tentar rodar os testes da app e vai dar erro de dependência se ela não tiver sido listada como pré-requisito. A documentação é bastante importante, siga os outros módulos... e a documentação é feita no formato pod.
+
+    $ perldoc pod
+
+Os testes são essenciais e ficam dentro do diretório t/ da applicação.
+
+O nome do módulo tem que ser auto informativo. Não crie nomes estranhos nada a ver. Pesquise outros módulos para se familiarizar com as nomenclaturas. Peça ajuda no irc, ou entre para uma lista de perl mongers no brasil.
+
+Pesquise se já existe um módulo que faz o que o projeto precisa. Provavelmente já existe um módulo que faz o trabalho que já foi amplamente testado.
+
+=head3 Dist::Milla
+
+O Dist::Milla é um gerador de esqueleto de módulos perl. Com ele é possível gerar um módulo em branco e seus arquivos base.
+
+Após instalar o Dist::Milla ( cpanm Dist::Milla ) , execute o setup:
+
+    $ milla setup
+
+depois é só criar módulos com o comando:
+
+    $ milla new Nome::Do::Modulo
+
+    $ milla help
+
+Existem outros geradores de esqueleto.
+
+=head2 Execução de scripts
+
+=head3 one-liners
+
+One-liners são executados através da linha de comando. E tem apenas uma linha. Para executar um trecho de código diretamente na linha de comando, é só jogar o código dentro do comando: perl -e '...codigo...' ex:
+
+    perl -e ' use strict; use warnings; my $var = 10; warn $var+1; '
+
+=head4 Executando aplicações com versões específicas de módulos
+
+Quando um script/app é executado, este provavelmente tem dependências que precisam estar instaladas para rodar um mero: "perl script.pl". No entanto, é possível executar um script sem ter instalado os módulos necessários para execução. É claro que o módulo tem que estar presente, mas ele pode estar presente dentro de qualquer diretório. É necessário apenas passar esse diretório como um argumento na hora de executar o script/app perl.
+
+Esta facilidade é muito boa para aplicações em produção, pois é possível manter repositórios em sincronia e apenas gracefully restartar os serviços indicando o local onde estáo os fontes das dependências do scrpit. Suponha que meu_modulo.pl requer o Meu::Modulo. Mas eu ainda não subi Meu::Modulo para o cpan, e tambem não tenho ele instalado. Meu::Modulo está num diretório local na minha máquina. Então eu executaria o meu_modulo.pl passando o local onde estão os fontes requeridos para a execução, da seguinte maneira:
+
+    perl -I../Meu-Modulo/lib/ -I../Outro-Modulo/lib meu_modulo.pl
+
+Para desenvolvimento tambem é interessante usar módulos dessa maneira, caso contrário seria necessário re-instalar os módulos após cada alteração. Isso seria non-sense.
+
+=head3 Introspecção/Inspeção de objectos:
+
+A introspecção de objetos é algo essencial para poder debugar e entender o que se passa nas aplicações. Outras vezes ajuda para inspecionar um objeto e lembrar o nome daquele método.
+
+Existem ferramentas bacaninhas para fazer esse tipo de análise, vou listar três bastante utilizadas. Eu uso mais o Data::Printer. Funciona muito bem e foi criada por um conterrâneo brazileiro. O Data::Printer aceita cores e customizações que possibilitam aumentar ou restringir o quê imprimir de um objeto na hora da inspeção. Mostra os métodos publicos e privados, isso é bem útil durante o uso de um módulo.
+
+O uso é simples, no meio do código você mete um warn para printar alguma variável, ex:
+
+    .... codigo ....
+        my $item = Some::Thing::Nice->new();
+        use DDP; warn p $item;
+    .... codigo ....
+
+Vou mostrar exemplos com objetos simples, tipo hash no entanto estes Dumpers podem ser usados em objetos de verdade.
+
+=head2 Data::Dumper
+
+O Data::Dumper vem instalado por padrão junto com o perl.
+
+    perl -e 'my $var={ a=>[1,2,3],x=>1, y=>2, z=>"bla"}; use Data::Dumper; print Dumper( $var );'
+    $VAR1 = {
+              'y' => 2,
+              'z' => 'bla',
+              'x' => 1,
+              'a' => [
+                       1,
+                       2,
+                       3
+                     ]
+            };
+
+=head2 Data::Dump::Streamer
+
+    perl -e 'my $var={ a=>[1,2,3],x=>1, y=>2, z=>"bla"}; use Data::Dump::Streamer; print Dump( $var );'
+    $HASH1 = {
+               a => [
+                      1,
+                      2,
+                      3
+                    ],
+               x => 1,
+               y => 2,
+               z => 'bla'
+             };
+
+=head2 Data::Printer
+
+    perl -e 'my $var={ a=>[1,2,3],x=>1, y=>2, z=>"bla"}; use DDP; print p $var ;'
+    \ {
+        a   [
+            [0] 1,
+            [1] 2,
+            [2] 3
+        ],
+        x   1,
+        y   2,
+        z   "bla"
+
+
+=head2 Arquivos
+
+Para trabalhar com arquivos em perl, é necessário abrir um arquivo, e obter seu conteúdo.
+
+O conteúdo pode ser obtido de muitas maneiras e depende de caso a caso. Por exemplo, se estiver trabalhando com arquivos de log que tem 1 terabyte não será possível abrir o arquivo todo de uma vez em memória. Nesse caso, é necessário ler o arquivo de X em X bytes até chegar no final, ou seja em chunks. As vezes interessa fazer um loop nas linhas do arquivo. Emfim, cada caso é um caso.
+
+open
+open( FH , "<" , "utf8test.pl" ) ; while( <FH> ) { warn $_ }
+
+read ( chunks of bytes )
+open( FH , "<" , "utf8test.pl" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
+
+read by line
+open( FH , "<" , "utf8test.pl" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
+
+
+write
+loop
+print
+special vars for new line
+readline
+
+=head3 File::Slurp
+
+Este módulo é fantastico para trabalhar com arquivos. Além deste módulo ser muito bem recomendado, tem padrões excelentes para abrir e escrever arquivos.
+
+    use File::Slurp;
+
+    my $text = read_file( "texto.txt" );
+
+    my @linas = read_file( "texto.txt" );
+
+=head2 Construção de classes / objetos
+
+
+    $ perldoc perlootut
+    $ perldoc perlobj
+
+Em perl um objeto é apenas uma estrutura de dados que sabe a qual classe ela pertence. Uma classe é simplesmente um pacote/package. A classe disponibiliza métodos que operam nos objetos. Um método é uma subrotina que aceita a referência de um objeto como primeiro argumento, o $self.
+
+No fundo os objetos são um hash que tem uma 'classe' identificadora diferente do tradicional HASH. Ao invés de HASH, vai aparecer Nome::Modulo.
+
+=head3 Class::Accessor
+
+
+
+
+
+=head3 Moose
+=head3 Moo
+
+
+=head2 Map e Grep
+
+map e grep são dois comandinhos que rodam em cima de uma lista. Tambem podem retornar uma lista com o resultado das operações. Usados em conjunto podem ser bastante poderosos para resolver problemas comuns.
+
+=head3 map
+
+A função map funciona como um foreach. É como se fosse um foreach $_ ( @items ) { ...faz algo com $_ e joga na lista de retorno, que pode ser usada opcionalmente ... } .
+
+O map trabalha em cima de cada item de uma lista. Isto é, pode fazer qualquer coisa com cada item de uma lista e pode retornar uma lista com o resultado de execução sob cada item da lista de entrada.
+
+    my @lista = ( qw| 4 2 5 6 2 3| );
+    my @lista_times_2 = map {
+        $_ * 2
+    } @lista;
+    use DDP; warn p @lista_times_2;
+
+não precisa necessariamente retornar uma lista, o map pode ser usado e seu retorno não precisa ser atribuído a nada, por exemplo:
+
+    my @lista = ( qw| 4 2 5 6 2 3| );
+    my @outra_lista = ();
+    map {
+        push @outra_lista, $_ if $_ > 3   # se o item for maior que 3 vai inserir em @outra_lista
+    } @lista;
+    use DDP; warn p @outra_lista;
+
+=head3 grep
+
+O grep funciona como um filtro e retorna os itens que passam o filtro. Ou seja, se eu tenho uma lista e preciso saber quais items atendem a determinados critérios, posso filtrá-los conforme o exemplo:
+
+    my @lista = ( qw| 5 21 2 5 6 77 3 3 54 2| );
+    my @menores_q_6 = grep { $_ < 6 } @lista;
+    use DDP ; warn p @menores_q_6;
+
+Então o que dá pra perceber é que map trabalha em cima de uma lista, e pode retornar uma lista.  Grep tambem, trabalha em cima de uma lista e pode retornar uma lista. Isso quer dizer que os comandos são compatíveis para serem usados em conjunto, pois dada uma lista, o map pode ser usado junto com um grep que retorna uma lista e passa para o map executar em seguida. Veja o exemplo, muito bom que foi publicado na internet em http://www.pal-blog.de/entwicklung/perl/perl-map-und.html?utm_source=pal-blog&utm_medium=RSS&utm_campaign=RSS: 
+
+Suponha que você tem uma lista de números, e precisa saber quais são menores que dez, e multiplicar esses itens por 2.
+
+A solução mais comum e genérica com encaixe em qualquer linguagem é:
+
+    my @a = (10,1,3,42,5,2,666,9);
+    my @b;
+    for my $item (@a) { # Alle Elemente von @a durchgehen
+       if ($item < 10) { # Nur Werte kleiner als 10 bearbeiten
+          push @b, $item * 2; # Wert verdoppeln und an @b anhängen
+       }
+    }
+
+Uma outra possível solução mais voltada à linguagem perl, envolveria o uso de map e grep.
+
+
+    my @a = (10,1,3,42,5,2,666,9); # lista de itens
+    my @temp = grep { $_ < 10 } @a; # filtra os itens menores que dez e joga em @temp
+    my @b = map { $_ * 2 } @temp; # pra cada item em temp, executa item * 2 e joga em @b
+
+
+
+No comando anterior, grep vem antes de map. E cada um está separado, cada um em sua linha, Eles podem trabalhar em conjunto pois ambos precisam de uma lista como input, e ambos tem uma lista como output. Ou seja, é possivel usar eles em uma única linha, ex:
+
+    my @a = (10,1,3,42,5,2,666,9);
+    my @b = map { $_ * 2 } grep { $_ < 10 } @a;
+
+
+e outra opção seria executar o filtro sem grep e apenas dentro do map:
+
+    my @a = (10,1,3,42,5,2,666,9);
+    my @b = map { if ($_ < 10) { $_ * 2 } else { () } } @a;
+
+=head2 Conexão com banco de dados
+
+=head2 Referências
+
+=head2 AUTHOR
+
+Hernan Lopes
+
+=head2 OUTROS CONTRIBUIDORES
+
+Se você ajudou a melhorar este documento, insira seu nome abaixo:
+
+=cut
