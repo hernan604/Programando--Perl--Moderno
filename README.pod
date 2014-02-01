@@ -189,7 +189,7 @@ Exemplo para ler os manuais de pragmas internos do perl:
 
 Exemplo para ler manual de um módulo:
 
-$ perldoc Some::Module
+    $ perldoc Some::Module
 
 Exemplo para ler o manual das funções internas:
 
@@ -760,14 +760,14 @@ Para trabalhar com arquivos em perl, é necessário abrir um arquivo, e obter se
 
 O conteúdo pode ser obtido de muitas maneiras e depende de caso a caso. Por exemplo, se estiver trabalhando com arquivos de log que tem 1 terabyte não será possível abrir o arquivo todo de uma vez em memória. Nesse caso, é necessário ler o arquivo de X em X bytes até chegar no final, ou seja em chunks. As vezes interessa fazer um loop nas linhas do arquivo. Emfim, cada caso é um caso.
 
-open
-open( FH , "<" , "utf8test.pl" ) ; while( <FH> ) { warn $_ }
+  open
+  open( FH , "<" , "utf8test.pl" ) ; while( <FH> ) { warn $_ }
 
-read ( chunks of bytes )
-open( FH , "<" , "utf8test.pl" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
+  read ( chunks of bytes )
+  open( FH , "<" , "utf8test.pl" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
 
-read by line
-open( FH , "<" , "utf8test.pl" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
+  read by line
+  open( FH , "<" , "utf8test.pl" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
 
 
 write
