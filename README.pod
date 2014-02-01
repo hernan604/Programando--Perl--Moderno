@@ -42,6 +42,12 @@ Agora sim, instale o perlbrew:
 
   $ perlbrew -j 8 install 5.19.1        # use 8 threads para compilar
 
+Essa linha que você executou: 
+
+  $ source ~/perl5/perlbrew/etc/bashrc
+
+precisa ser adicionada no ~/.bash_profile ou ~/.bashrc . Pois ela precisa ser executada sempre antes de usar a versão esperada do perl. É só adicionar no final desses arquivos e depois sair do terminal e abrir ele novamente. Executar o comando perl -v para ter certeza que o perlbrew está sendo executado corretamente e a versão apresentada é a correta que você instalou.
+
 Após finalizar a instalação, altere a versão para a que você instalou:
 
   $ perlbrew switch 5.19.1
@@ -177,9 +183,9 @@ Através dele é possível visualizar os manuais de módulos e funções. É sim
 
 Exemplo para ler os manuais de pragmas internos do perl:
 
-$ perldoc pragma
-$ perldoc strict
-$ perldoc warnings
+    $ perldoc pragma
+    $ perldoc strict
+    $ perldoc warnings
 
 Exemplo para ler manual de um módulo:
 
@@ -187,10 +193,10 @@ $ perldoc Some::Module
 
 Exemplo para ler o manual das funções internas:
 
-$ perldoc -f sort
-$ perldoc -f qw
-$ perldoc -f push
-$ perldoc -f shift
+    $ perldoc -f sort
+    $ perldoc -f qw
+    $ perldoc -f push
+    $ perldoc -f shift
 
 Embora a leitura seja pesada, tem bastante coisa útil dentro desses manuais. Talvez não tanto para principiantes, mas é sempre bom se acostumar a usar o perldoc como referência na hora de usar um comando, ou, módulo.
 E aos poucos o seu uso torna-se natural.
