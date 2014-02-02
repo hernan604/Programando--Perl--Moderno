@@ -10,11 +10,13 @@ Este documento ainda está em desenvolvimento.
 
 =head2 RESUMO
 
-O público álvo deste tutorial é principalmente novos programadores da linguagem perl. A intenção é que este manual tenha qualidade suficiente para servir e atrair mais e mais programadores ao fantástico universo da linguagem perl.
+O público álvo deste tutorial é principalmente novos programadores da linguagem perl. A intenção é que este manual tenha qualidade suficiente para servir e atrair mais e mais programadores ao fantástico universo da linguagem perl. A intenção inicial do autor é esclarecer dúvidas que o próprio autor gostaria que lhe tivessem sido esclarecidas o quanto antes.
 
 A parte de "Temas Livres" ao final deste documento está aberta para quem quiser contribuir. Deixei alguns temas como exemplo.. a idéia colocar soluções para problemas do dia-a-dia que usuários podem enfrentar e servir como referência para consulta.
 
 Entre em contato, ou submeta um pull request com o fix caso encontre erro neste documento.
+
+Toda ajuda é bem vinda para melhorar este documento.
 
 =cut
 #   Ha muito tempo tenho vontade de criar um tutorial para ajudar o pessoal que está aprendendo ou quer aprender mais sobre a linguagem.
@@ -1460,6 +1462,9 @@ As vezes é preciso jogar vazio na lista de retorno. A primeira intenção é jo
 =head2 APÊNDICE
 
 =head3 TEMA LIVRE
+
+Esta seção é destinada a pessoas interessadas em colaborar com soluções pontuais que sirvam como referência a outros usuários.
+Deixo alguns exemplos de soluções pontuais que me interessaria conhecer.
 
 =head4 manipulando arquivos excel com perl
 
