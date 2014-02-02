@@ -1004,34 +1004,46 @@ Para trabalhar com arquivos em perl, é necessário abrir um arquivo, e obter se
 
 O conteúdo pode ser obtido de muitas maneiras e depende de caso a caso. Por exemplo, se estiver trabalhando com arquivos de log que tem 1 terabyte não será possível abrir o arquivo todo de uma vez em memória. Nesse caso, é necessário ler o arquivo de X em X bytes até chegar no final, ou seja em chunks. As vezes interessa fazer um loop nas linhas do arquivo. Emfim, cada caso é um caso.
 
+=head3 Printar todas as linhas de um arquivo
+
     open
-    open( FH , "<" , "README.pod" ) ; while( <FH> ) { print $_ }  
+    open( FH , "<" , "README.pod" ) ; while( <FH> ) { print $_ ; print "----------\n"; }  
 
-    read ( chunks of bytes )
-    open( FH , "<" , "README.pod" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
+=head3 Printar determinado número de bytes de arquvio
 
-    read by line
-    open( FH , "<" , "README.pod" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
+Esta opção é muito útil para trabalhar com arquivos gigantes que não podem ser abertos de uma única vez pois não cabem na memória da máquina. 
 
+Então é possível fazer open em um arquivo e gerar um filehandle. Posteriormente pode ser executado o comando read para ler N bytes do filehandle.
 
-write
-loop
-print
-special vars for new line
-readline
+    open( FH , "<" , "README.pod" ) ;
+    my $bytes = 10;
+    my $text; while ( read( FH, $text, $bytes ) ) {
+        use DDP;
+        warn p $text;
+    }
+
+Outra opção é mexer com a variável especial $/ ( perldoc perlvar ). O exemplo a seguir utiliza-se desta técnica para alterar o $/ por espaços. Agora quando fizer loop no filehandle, vai printar palavras separadas por espaço.
+
+    open( FH , "<" , "README.pod" ) ; {
+        local $/=" " ;      # enable "slurp" mode, altera o padrào ed "\n" para espaço.
+        while ( <FH> ) {
+            warn $_;
+        }
+    };
 
 =head3 File::Slurp
 
 Este módulo é fantastico para trabalhar com arquivos. Além deste módulo ser muito bem recomendado, tem padrões excelentes para abrir e escrever arquivos.
 
     use File::Slurp;
-
     my $text = read_file( "texto.txt" );
-
     my @linas = read_file( "texto.txt" );
 
-=head2 Construção de classes / objetos
+Veja as demais opções na documentação:
 
+    $ perldoc File::Slurp
+
+=head2 Construção de classes / objetos
 
     $ perldoc perlootut
     $ perldoc perlobj
