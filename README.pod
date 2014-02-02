@@ -970,6 +970,49 @@ e o negador (não match)
 
 Tem tudo no perlre.
 
+=head3 Matches
+
+As regex retornam por padrão uma lista de matches. Então eu posso fazer algo assim:
+
+    my   $texto = "Jão dimenor";
+    my ( $nome, $idade ) = $texto =~ m/(.+) (.+)/ig; # automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
+    warn $nome;
+    warn $idade;
+
+    my   $total = ( $nome, $idade ) = $texto =~ m/(.+) (.+)/ig; # automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
+    warn $total;
+
+    my   $total =()= $texto =~ m/(.+) (.+)/ig; # automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
+    warn $total;
+
+=head3 Quantidade de matches
+
+Para saber a quantidade de matches de uma regex, é necessário usar o operador goatse " =()= ". 
+
+Para contar o total de vezes que aparece o trecho aa no texto abaixo:
+
+    my   $texto = "aa bb cc aa aa aa bb aa cc dd aa";
+    my   $total_de_aa =()= $texto =~ m!aa!g;
+    warn $total_de_aa;
+
+=head3 Transliteração
+
+Para substituir uma letra por outra, usa-se bastante transliteração. As vezes o pessoal faz com regex, ou sei la como, mas o jeito mais coerente é usar transliteração, ex:
+
+Vamos supor que quero transformar todas as vogais em letras maiúscilas. Posso fazer da seguinte maneira com transliteração:
+
+    my $text = "aa bb cc dd ee ff gg";
+    $text =~ tr/[aeiou]/[AEIOU]/;
+    warn $text;
+    #saida: AA bb cc dd EE ff gg
+
+outro uso bem comum é para trocar caracteres acentuados por caracteres sem acento:
+
+    my $text2 = "aaá eée iíí çc";
+    $text2 =~ tr!áãíçé!aaice!;
+    warn $text2;
+    #saída: aaa eee iii cc
+
 =head2 Pragmas
 
 Um pragma é um módulo que influencia sob alguns aspectos na hora de compilar e executar códigos perl.
