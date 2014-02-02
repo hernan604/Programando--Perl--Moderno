@@ -664,6 +664,160 @@ Tambem é possível alterar entre uma ou outra, a diferença delas esta nos @ e 
 
 O % e @ vai alterar o comportamento se é aplicada lista ou array associativo. No final eles são bem similares e mudam de acorco com % ou @.
 
+=head3 Condição para adicionar ou não item em lista, hash e array
+
+Algo muito bacana pode ser usado em perl, que é colocar um ternário como um item de uma lista, hash ou array.
+
+
+    use DDP;
+
+primeiro um arrau com um item que é uma lista vazia
+
+    my $array = [
+      'um', 
+      'dois', 
+      (),       # este valor é igual a array em branco, que é igual a nada neste caso.
+                # pois () é sempre uma lista de itens, então aqui é uma lista de itens
+                # vazia neste caso.. consequentemente acaba não contando como item nenhum.
+      'tres'
+    ];
+
+    warn p $array;
+    warn 'Total de itens: ' .scalar @$array;
+    #   \ [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "tres"
+    #   ] at t.pl line 10.
+    #   Total de itens: 3 at t.pl line 11.
+
+agora um array que tem uma condição para decidir o valor do terceiro item
+
+    my $array2 = [
+      'um', 
+      'dois', 
+      ( 1 == 1 ) 
+      ? ( 'sim' ) 
+      : ( 'não' ),       # este valor é igual a array em branco, que é igual a nada neste caso.
+      'tres'
+    ];
+    warn p $array2;
+    warn 'Total de itens: '. scalar @$array2;
+    #   \ [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "sim",
+    #       [3] "tres"
+    #   ] at t.pl line 22.
+    #   Total de itens: 4 at t.pl line 23.
+
+agora, um outro array com condição e retorna 3 itens sim caso a condição seja positiva
+
+    my $array3 = [
+      'um', 
+      'dois', 
+      ( 1 == 1 ) 
+      ? ( 'sim', 'sim', 'sim' ) 
+      : ( 'não' ),       # este valor é igual a array em branco, que é igual a nada neste caso.
+      'tres'
+    ];
+    warn p $array3;
+    warn 'Total de itens: '. scalar @$array3;
+    #   \ [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "sim",
+    #       [3] "sim",
+    #       [4] "sim",
+    #       [5] "tres"
+    #   ] at t.pl line 35.
+    #   Total de itens: 6 at t.pl line 36.
+
+um a lista com condição para decidir qual item entra na lista
+
+    my @list = (
+      'um',
+      'dois',
+      ( 3 == 3 ) ? ( 'tres' ): ( 'inválido' ),
+      'quatro',
+    );
+    warn p @list;
+    warn 'Total de itens: ' . scalar @list;
+    #   [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "tres",
+    #       [3] "quatro"
+    #   ] at t.pl line 47.
+    #   Total de itens: 4 at t.pl line 48.
+
+Tambem é possível usar o () para setar valor nenhum:
+
+    my @list = (
+      'um',
+      'dois',
+      ( 3 == 3 ) ? ( ): ( ),
+      'quatro',
+    );
+    warn p @list;
+    warn 'Total de itens: ' . scalar @list;
+    #   [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "quatro"
+    #   ] at t.pl line 9.
+    #   Total de itens: 3 at t.pl line 10.
+
+ou setar vários itens de uma só vez
+
+    my @list2 = (
+      'um',
+      'dois',
+      ( 3 == 3 ) ? ( 'tres1', 'tres2', 'tres3' ): ( 'inválido' ),
+      'quatro',
+    );
+    warn p @list2;
+    warn 'Total de itens: ' . scalar @list2;
+    #   [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "tres1",
+    #       [3] "tres2",
+    #       [4] "tres3",
+    #       [5] "quatro"
+    #   ] at t.pl line 56.
+    #   Total de itens: 6 at t.pl line 57.
+
+agora uma lista ordenada
+
+    my $idade = 17;
+    my %lista_ordenada = (
+      nome => 'João',
+      ( $idade < 18 )
+      ? ( idade => 'dimenor' )
+      : ( idade => 'dimaior' )
+    );
+    warn p %lista_ordenada;
+    #   {
+    #       idade   "dimenor",
+    #       nome    "João"
+    #   } at t.pl line 67.
+
+um hash
+
+    my $hash = {
+        nome => "jão",
+        ( $idade  < 18  ) 
+        ? ( idade => 'dimenor' ) 
+        : ( idade => 'dimaior' ),
+    };
+    warn p $hash;
+    #   \ {
+    #       idade   "dimenor",
+    #       nome    "jão"
+    #   } at t.pl line 119.
+    
+
 =head3 Curiosidades
 
 Tambem é possível transformar os resultados da segunte maneira:
@@ -1287,6 +1441,14 @@ e outra opção seria executar o filtro sem grep e apenas dentro do map:
 
     my @a = (10,1,3,42,5,2,666,9);
     my @b = map { if ($_ < 10) { $_ * 2 } else { () } } @a;
+
+=head4 Itens vazios na lista de retorno
+
+As vezes é preciso jogar vazio na lista de retorno. A primeira intenção é jogar um undefined. Mas como é uma lista, a maneira correta é atribuir um item de lista vazia, que resulta em nada.
+
+    my @lista               = ( qw| joao amanda leticia jessica jenifer jorge roberto | );
+    my @terminando_em_a     = map {  if ( $_ =~ m!a$! ) { $_ } else { () } } @lista;
+    warn p @terminando_em_a;
 
 =head2 Conexão com banco de dados
 
