@@ -904,6 +904,41 @@ Esta facilidade é muito boa para aplicações em produção, pois é possível 
 
 Para desenvolvimento tambem é interessante usar módulos dessa maneira, caso contrário seria necessário re-instalar os módulos após cada alteração. Isso seria non-sense.
 
+=head2 print vs warn vs say
+
+    $ perldoc -f warn
+    $ perldoc -f print
+    $ perldoc -f say
+
+Para imprimir mensagens existe basicamente 3 alteranativas. As mais comuns e tambem mais antigas são print e warn. O say exige declaração do uso da feature say.
+
+As 3 servem para printar mensagens na tela, no entanto, o warn printa em STDERR enquanto print e say printam para STDOUT.
+
+ps. em unix as aplicações podem receber dados do STDIN (ex teclado) e enviar dados para STDOUT (ex terminal) e STDERR ( ex terminal tambem, mas como erro) mais em: http://en.wikipedia.org/wiki/Standard_streams
+
+Print e say, tentando capturar de STDERR ( 2> ), não vai dar certo pois por padrão essas funções mandam pra STDOUT ( > ):
+
+    $ rm log; perl -e 'use feature "say" ; warn "a" ;   ' 2> log && echo "cat log:" && cat log   # usa 2> pra capturar STDERR
+    $ rm log; perl -e 'use feature "say" ; warn "a" ;   ' 2> log && echo "cat log:" && cat log   # usa 2> pra capturar STDERR
+
+agora sim, vai conseguir capturar de STDOUT:
+
+    $ rm log; perl -e 'use feature "say" ;  say "a" ;   '  > log && echo "cat log:" && cat log   # usa > pra capturar STDOUT
+    $ rm log; perl -e '                   print "a" ;   '  > log && echo "cat log:" && cat log   # usa > pra capturar STDOUT
+
+O warn joga a saída pra STDERR
+
+    $ rm log; perl -e 'use feature 'say' ; warn "a" ;   ' 2> log && echo "cat log:" && cat log   # usa 2> pra capturar STDERR
+
+se tentar capturar a saída do warn na STDOUT, não vai conseguir pois o warn sempre joga pra STDERR
+
+    $ rm log; perl -e 'use feature 'say' ; warn "a" ;   '  > log && echo "cat log:" && cat log   # printa em branco 
+
+tambem é possível forçar o print pra imprimir em STDERR:
+
+    $ print STDERR "texto";     # e pode ser capturado com 2> 
+    $ print STDOUT "texto";     # e pode ser capturado com >
+
 =head2 Introspecção/Inspeção de objectos:
 
 A introspecção de objetos é algo essencial para poder debugar e entender o que se passa nas aplicações. Outras vezes ajuda para inspecionar um objeto e lembrar o nome daquele método.
@@ -970,13 +1005,13 @@ Para trabalhar com arquivos em perl, é necessário abrir um arquivo, e obter se
 O conteúdo pode ser obtido de muitas maneiras e depende de caso a caso. Por exemplo, se estiver trabalhando com arquivos de log que tem 1 terabyte não será possível abrir o arquivo todo de uma vez em memória. Nesse caso, é necessário ler o arquivo de X em X bytes até chegar no final, ou seja em chunks. As vezes interessa fazer um loop nas linhas do arquivo. Emfim, cada caso é um caso.
 
     open
-    open( FH , "<" , "utf8test.pl" ) ; while( <FH> ) { warn $_ }
+    open( FH , "<" , "README.pod" ) ; while( <FH> ) { print $_ }  
 
     read ( chunks of bytes )
-    open( FH , "<" , "utf8test.pl" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
+    open( FH , "<" , "README.pod" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
 
     read by line
-    open( FH , "<" , "utf8test.pl" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
+    open( FH , "<" , "README.pod" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
 
 
 write
