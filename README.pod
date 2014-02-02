@@ -544,7 +544,40 @@ grep, posso usar o grep  para filtrar os maiores de idade dentro de uma lista de
     my @maior_de_idade = grep {  $_->{ idade }  ne 'dimenor' } @pessoas;
     use DDP; warn p @maior_de_idade;
 
-=head3 De-referenciando
+=head3 Referenciando e De-referenciando
+
+Resumo: para passar a referência normalmente usa-se a \ antes da variável.  E para de-referenciar, usa-se o tipo{}, @{ $var } para de-referenciar $var em lista e %{ $var } para de-referenciar $var em lista-ordenada. É possível referenciar e dereferenciar a la vontê.
+
+Sempre que o código tiver uma lista e precisar passar pra uma função que espera um array, é necessário passar a referência da lista que vira array para o método. É possível passar a lista, mas provavelmente não é isso que você precisa.
+
+    my @lista                         = ( qw| aa bb cc | );
+    use DDP; warn p @lista;
+    my $lista_array_ref               = \@lista;    #\ retorna a referência
+    use DDP; warn p $lista_array_ref; warn ref $lista_array_ref;
+    my @lista_dereferenciada          = @{  $lista_array_ref  };
+    use DDP; warn p @lista_dereferenciada;
+
+Agora com lista ordenada:
+
+    my %formulario = (
+        nome    => 'Jão',
+        idade   => 'dimenor'
+    );
+    use DDP; warn p %formulario;
+    my $form       = \%formulario;
+    warn p $form; warn ref $form;
+    my %form_dereferenciado = %{  $form  };
+    warn p %form_dereferenciado;
+
+De-referenciar quer dizer: mudar o contexto dos dados. Ou seja, eu posso ter uma função que aguarda um array como argumento... mas, eu tenho uma lista de valores e preciso passar essa lista pra função que espera um array. Nesse momento eu posso transformar a lista em array para passar pra função.
+
+    my @lista = ( qw| aa bb cc dd ee ff| );
+    my $funcao = sub {
+        my ( $arr ) = @_;     #recebe um scalar
+        use DDP; warn p $arr;
+    };
+
+    $funcao->(  \@lista  );   #
 
 Ao passar uma lista por referencia ela é transformada em ARRAY(scalar) para ser recebida apenas como 1 único argumento. E para transformá-la em lista novamente é necessário fazer uma de-referencia.. que funciona da seguinte maneira:
 
@@ -623,6 +656,60 @@ Tambem é possível alterar entre uma ou outra, a diferença delas esta nos @ e 
     my %lista = @lista; #e vice versa
 
 O % e @ vai alterar o comportamento se é aplicada lista ou array associativo. No final eles são bem similares e mudam de acorco com % ou @.
+
+=head3 Curiosidades
+
+Tambem é possível transformar os resultados da segunte maneira:
+
+    #primeiro vou criar uma lista 
+    my     @palavras  = ( qw| nome primeiro sobrenome segundo idade terceiro| );
+    warn p @palavras;
+    #   [
+    #       [0] "nome",
+    #       [1] "primeiro",
+    #       [2] "sobrenome",
+    #       [3] "segundo",
+    #       [4] "idade",
+    #       [5] "terceiro"
+    #   ] at t.pl line 4.
+
+    my     %form      = %{{@palavras}};
+    warn p %form;
+    #   {
+    #       idade       "terceiro",
+    #       nome        "primeiro",
+    #       sobrenome   "segundo"
+    #   } at t.pl line 8.
+
+    my @lista2 = map { $_ } @palavras;
+    warn p @lista2;
+    #   [
+    #       [0] "nome",
+    #       [1] "primeiro",
+    #       [2] "sobrenome",
+    #       [3] "segundo",
+    #       [4] "idade",
+    #       [5] "terceiro"
+    #   ] at t.pl line 12.
+
+    my $form_hash = { map { $_ } @palavras };
+    warn p $form_hash;
+    #   \ {
+    #       idade       "terceiro",
+    #       nome        "primeiro",
+    #       sobrenome   "segundo"
+    #   } at t.pl line 16.
+
+    my @lista_3 = %{ $form_hash };
+    warn p @lista_3;
+    #   [
+    #       [0] "idade",
+    #       [1] "terceiro",
+    #       [2] "sobrenome",
+    #       [3] "segundo",
+    #       [4] "nome",
+    #       [5] "primeiro"
+    #   ] at t.pl line 20.
 
 =head3 coma e Fat-coma, virgula e virgula gorda
 
@@ -817,7 +904,7 @@ Esta facilidade é muito boa para aplicações em produção, pois é possível 
 
 Para desenvolvimento tambem é interessante usar módulos dessa maneira, caso contrário seria necessário re-instalar os módulos após cada alteração. Isso seria non-sense.
 
-=head3 Introspecção/Inspeção de objectos:
+=head2 Introspecção/Inspeção de objectos:
 
 A introspecção de objetos é algo essencial para poder debugar e entender o que se passa nas aplicações. Outras vezes ajuda para inspecionar um objeto e lembrar o nome daquele método.
 
@@ -832,7 +919,7 @@ O uso é simples, no meio do código você mete um warn para printar alguma vari
 
 Vou mostrar exemplos com objetos simples, tipo hash no entanto estes Dumpers podem ser usados em objetos de verdade.
 
-=head2 Data::Dumper
+=head3 Data::Dumper
 
 O Data::Dumper vem instalado por padrão junto com o perl.
 
@@ -848,7 +935,7 @@ O Data::Dumper vem instalado por padrão junto com o perl.
                      ]
             };
 
-=head2 Data::Dump::Streamer
+=head3 Data::Dump::Streamer
 
     perl -e 'my $var={ a=>[1,2,3],x=>1, y=>2, z=>"bla"}; use Data::Dump::Streamer; print Dump( $var );'
     $HASH1 = {
@@ -862,7 +949,7 @@ O Data::Dumper vem instalado por padrão junto com o perl.
                z => 'bla'
              };
 
-=head2 Data::Printer
+=head3 Data::Printer
 
     perl -e 'my $var={ a=>[1,2,3],x=>1, y=>2, z=>"bla"}; use DDP; print p $var ;'
     \ {
@@ -882,14 +969,14 @@ Para trabalhar com arquivos em perl, é necessário abrir um arquivo, e obter se
 
 O conteúdo pode ser obtido de muitas maneiras e depende de caso a caso. Por exemplo, se estiver trabalhando com arquivos de log que tem 1 terabyte não será possível abrir o arquivo todo de uma vez em memória. Nesse caso, é necessário ler o arquivo de X em X bytes até chegar no final, ou seja em chunks. As vezes interessa fazer um loop nas linhas do arquivo. Emfim, cada caso é um caso.
 
-  open
-  open( FH , "<" , "utf8test.pl" ) ; while( <FH> ) { warn $_ }
+    open
+    open( FH , "<" , "utf8test.pl" ) ; while( <FH> ) { warn $_ }
 
-  read ( chunks of bytes )
-  open( FH , "<" , "utf8test.pl" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
+    read ( chunks of bytes )
+    open( FH , "<" , "utf8test.pl" ) ; my $text; while ( read( FH, $text, 10 ) ) { use DDP; warn p $text; }
 
-  read by line
-  open( FH , "<" , "utf8test.pl" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
+    read by line
+    open( FH , "<" , "utf8test.pl" ) ; local $/="\n" ; while ( readline( FH ) ) { use DDP; warn p $_; }
 
 
 write
