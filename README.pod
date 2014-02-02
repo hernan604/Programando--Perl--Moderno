@@ -133,6 +133,19 @@ Toda a documentação é feita no formato POD ( plain old documentation )
 
 POD = plain old documentation. é um formato de documentação que pode residir junto aos código fonte perl. E durante a instalação do módulo, é gerada a documentação com base no conteúdo POD nos arquivos do módulo.
 
+Este documento é feito em POD. Existem plugins que lêem POD e transformam em HTML, man pages, etc, diferentes formatos. 
+
+Você pode conferir o POD original deste documento em:
+
+    https://raw2.github.com/hernan604/Programando--Perl--Moderno/master/README.pod
+
+Se você notar, vai ver várias diretivas:
+
+    =head2 Título heading 2
+    =head3 Título heading 3
+
+etc... são 'tags' do formato POD.
+
 =head3 Código fonte
 
 É possível baixar e visualizar o código fonte. O link de download indica um arquivo.tar.gz que é o fonte do módulo em si. No entanto tambem é possível visualizar os códigos fonte clicando em 'source', ex:
