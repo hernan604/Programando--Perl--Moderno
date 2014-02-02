@@ -1,4 +1,5 @@
 =encoding utf8
+
 use strict;
 use warnings;
 
@@ -125,6 +126,12 @@ Documentação é levada bem a sério no cpan. Existe alguns padrões mínimos a
   LICENSE       #informações da licensa
 
 Isso é bacana pois ao procurar um módulo, é certo que dá pra ter uma noção do seu uso já na 'synopse'.
+
+Toda a documentação é feita no formato POD ( plain old documentation )
+
+=head3 POD
+
+POD = plain old documentation. é um formato de documentação que pode residir junto aos código fonte perl. E durante a instalação do módulo, é gerada a documentação com base no conteúdo POD nos arquivos do módulo.
 
 =head3 Código fonte
 
@@ -1483,3 +1490,6 @@ Hernan Lopes
 Se você ajudou a melhorar este documento, insira seu nome abaixo:
 
 =cut
+
+
+1;
