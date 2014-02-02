@@ -215,20 +215,22 @@ O jeito mais direto é assim:
 
 Isso quer dizer que ele vai apenas chamar seu script e executar.
 
-Existem outras opções ótimas para desenvolvedores, que possibilitam usar versões especificas de módulos que o script esteja usando. Ou seja, supondo que 'meu_script.pl' vai usar o módulo Modulo::XYZ, no caso assima seria usada a versão que está instalada junto com minha versão de perl atual.
+Existem outras opções ótimas para desenvolvedores, que possibilitam usar versões especificas de módulos que o script esteja usando. Ou seja, supondo que 'meu_script.pl' vai usar o módulo Modulo::XYZ, no caso acima seria usada a versão que está instalada junto com minha versão de perl atual.
 
 No entanto eu posso indicar um diretório onde esse módulo está, utilizando o argumento -I../diretorio/modulo/lib (i maiúscilo seguido do diretorio/lib ) assim:
 
     cd /home/usuario/script
     perl -I/Downloads/Modulo-XYZ/lib/ meu_script.pl
 
-Isso fara seu script usar o Modulo::XYZ do diretório indicado: /Downloads/Modulo-XYZ/lib/ ao invés do que está instalado junto com seu perl.
+Isso fará o script usar o Modulo::XYZ do diretório indicado: /Downloads/Modulo-XYZ/lib/ ao invés do que está instalado junto com seu perl.
 
-Isso é bastante útil na hora de debugar algum módulo externo. E tambem para usar módulos fazendo apenas o download e indicando o diterório do modulo/lib. Ou seja, não necessariamente precisaria instalar o módulo... eu posso indicar o local do módulo em tempo de execução. Para a aplicação é transparente.
+Isso é bastante útil na hora de debugar algum módulo externo. E tambem para usar módulos fazendo apenas o download e indicando o diterório do modulo/lib. Ou seja, não necessariamente precisaria instalar o módulo... eu posso indicar o local do módulo em tempo de execução. Para a aplicação é transparente. Dessa maneira é possível criar um 'bundle' que contém todos as depêndencias necessárias para executar o módulo.
 
 =head2 Variáveis de ambiente
 
-As variáveis de ambiente podem ser acessadas através da variável $ENV{"PATH"}
+As variáveis de ambiente podem ser acessadas através da variável $ENV{"PATH"}. 
+
+Variáveis de ambiente tambem servem muito bem para salvar usuários e senhas de acesso nos sistemas da rede.
 
 =head2 Escopo de variável
 
@@ -323,6 +325,22 @@ e uma chamada de um objeto '$item' co método faca_algo
         $callback->( "Código executado com sucesso." );
     }
 
+=head3 Métodos anônimos
+
+Tambem é possível trabalhar com métodos/funções anônimas em perl. É possível passar métodos ou a referência deles como callback.
+
+Função anônima, posso simplesmente criar um método anônimo que recebe 2 argumentos e já é executado: 
+
+  perl -e 'sub { my ( $arg1, $arg2 ) = @_;  warn $arg1.$arg2 }->( "argumento1", "argumento2" ); '
+
+Ou eu posso criar essa closure anônima ( perldoc -f sub ) e receber a referência do método. podendo usar a variável como se fosse um método.
+
+  perl -e 'my $metodo = sub { my ( $arg1, $arg2 ) = @_;  warn $arg1.$arg2 };  warn "---"; $metodo->( "argumento1", "argumento2" ); '
+
+Callbacks, tambem é possível. É só passar a referência do método como argumento de outro método. Trivial.
+
+  perl -e ' my $callback = sub { my ( $msg ) = @_; warn $msg  }  ; sub {  my ( $cb ) = @_; $cb->( "here callback" ) }->( $callback )  '
+
 =head2 Variáveis
 
 Por padrão todas as variáveis começam com $ e devem ser declaradas com 'my'. ex:
@@ -343,6 +361,8 @@ Por padrão todas as variáveis começam com $ e devem ser declaradas com 'my'. 
 
 =head2 scalar
 
+  $ perldoc perldata
+
 Variáveis scalares podem ser números, strings ou referências para outras variáveis. A variável escalar é sempre uma única coisa e pode ser passada como argumento como uma única coisa.
 
 Uma variável scalar sempre começa com $, ex:
@@ -351,16 +371,16 @@ Uma variável scalar sempre começa com $, ex:
 
 =head3 array e listas
 
-Um array, ou, lista de coisas, pode ser declarada com um array scalar, ou uma lista.
+Arrays e listas são muito parecidos e podem funcionar em conjunto, mas não são exatamente a mesma coisa.
 
-array scalar:
+array é scalar (scalar é o $ cifrão ou sigíl): # e scalar é apenas uma coisa. neste caso é uma referência para um objeto do tipo ARRAY
 
     $meu_array = [
         "coisa1",
         "coisa2"
     ]
 
-lista:
+lista (lista é o @ arroba):
 
     @minha_lista = (
         "coisa1",
@@ -371,13 +391,11 @@ Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opç�
 
     @lista = (  qw|item1 item2 item3|  );    #é a mesma coisa que @lista = ( 'item1', 'item2', 'item3' );
 
-Ambos funcionam de maneira similar, parecem, mas não são a mesma coisa.
-
 Lembre-se, um scalar é sempre uma coisa apenas. E a lista pode ser mais de uma coisa.
 
 Então por exemplo, se eu chamar um método e passar minha lista para esse método, o que acontece ?
 
-    my @l=(qw|aa bb cc|);
+    my @l=(qw|aa bb cc|);   #LISTA
     my $test = sub {                            # sub é tipo function no javascript. é declaração de método. neste caso joguei o método na variável $test
         my ( $um, $dois, $tres ) = @_ ;
         warn $um;
@@ -394,7 +412,7 @@ saida: cada item da lista caiu como um argumento.
 
 Agora, ao invés de passar a lista, vou passar um array
 
-    my $l=[qw|aa bb cc|];
+    my $l=[qw|aa bb cc|];     #ARRAY
     my $test = sub {
     my ( $um, $dois, $tres ) = @_ ;
         warn $um;
@@ -416,12 +434,115 @@ Para saber o tamanho de uma lista:
     my $tamanho = @lista;
     warn $tamanho; #3
 
-    ou $tamanho = scalar @lista;
+    ou $tamanho = scalar @lista; # nem sempre é obrigatório o uso de parentêsis
+                                 # na chamada dos comandos. Poderia ter chamado
+                                 # assim: $tam = scalar( @lista ); c/parentesis
+    ou $tamanho = $#lista;
 
 e para arrays:
 
     my $lista = [ 1,2,3 ];
     length $lista; #3
+
+Acesso aos valores da lista:
+    
+    my $item    = $minha_lista[2]         #terceiro item da lista
+    $minha_lista[2] = "bla"               #altera terceiro valor
+
+Foreach loop em lista:
+
+    my @lista = qw(|aa bb cc|);
+    foreach my $item ( @lista ) {
+        warn $item;
+    }
+
+Foreach loop em array. Para fazer um loop em um array, é necessário de-referenciar o array em lista, pois o foreach exige uma lista como argumento para trabalhar.
+
+    $ perldoc perlsyn #procure por foreach, while etc.
+
+    my $arr = [ qw|  aa bb cc | ];
+    foreach my $item ( @{  $arr  } ) {
+        warn $item;
+    }
+
+For com lista:
+
+    my @l=(qw|aa bb cc|); 
+    for ( my $i =0; $i < @l; $i++ ) { 
+        warn $l[ $i ] ;
+    } 
+
+For com array:
+
+    my $l=[qw|aa bb cc|]; 
+    for ( my $i =0; $i < @{$l}; $i++ ) { 
+        warn $l->[$i];    #opcao 1 para printar o valor
+        warn @{$l}[$i] ;  #opção 2 para printar o valor
+    }
+
+While com lista:
+
+Tendo em vista que o while espera uma expressão, ele só vai executar se essa expressão resultar positiva. 
+Vou usar o comando shift que retira e retorna o primeiro item da lista, reduzindo a lista em menos 1 item. E quando terminar de retornar os valores, a expressão vai resultar negativo e o while não será executado.
+
+    my @lista = (qw| aa bb cc| ); 
+    while ( my $item = shift @lista) { 
+        warn $item        # <-- todos os comando precisam obrigatoriamente de ponto e vírgula, menos o último comando do bloco.
+    }
+
+Map, o map permite trabalhar com cada item da lista. É igual ao foreach, mas ele pode ser encadeado com outros maps ou greps pois ambos esperam uma lista como entrada e ambos retornam uma lista como resultado.
+
+    my @pessoas = (
+        {
+            nome  => 'Jão',
+            idade => 'dimenor',
+            ensino=> 'médio',
+        },
+        {
+            nome  => 'Mary',
+            idade => 21,
+            ensino=> 'superior',
+        },
+        {
+            nome  => 'Janet',
+            sobrenome=>'Silva',
+            idade => 25,
+            ensino=> 'superior',
+        },
+    );
+
+    @pessoas = map {
+        if ( ! $_->{ sobrenome } ) {
+            $_->{ sobrenome }  = undefined;
+            $_->{ status }     = "SEM-SOBRENOME" ;
+        }
+        $_; # valor que será retornado. Não precisa colocar o 'return'
+        # return $_; #outra opção seria colocar o return, mas não é obrigatório
+    } @pessoas;
+    use DDP; warn p @pessoas;
+
+grep, posso usar o grep  para filtrar os maiores de idade dentro de uma lista de pessoas. Esta é uma lista de hashes onde cada hash representa uma pessoa. Usarei o grep para filtrar e obter todas as pessoas que não são dimenor.
+
+    my @pessoas = (
+        {
+            nome  => 'Jão',
+            idade => 'dimenor',
+            ensino=> 'médio',
+        },
+        {
+            nome  => 'Mary',
+            idade => 21,
+            ensino=> 'superior',
+        },
+        {
+            nome  => 'Janet',
+            idade => 25,
+            ensino=> 'superior',
+        },
+    );
+
+    my @maior_de_idade = grep {  $_->{ idade }  ne 'dimenor' } @pessoas;
+    use DDP; warn p @maior_de_idade;
 
 =head3 De-referenciando
 
