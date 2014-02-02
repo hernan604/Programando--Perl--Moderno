@@ -10,6 +10,12 @@ Este documento ainda está em desenvolvimento.
 
 =head2 RESUMO
 
+O público álvo deste tutorial é principalmente novos programadores da linguagem perl. A intenção é que este manual tenha qualidade suficiente para servir e atrair mais e mais programadores ao fantástico universo da linguagem perl.
+
+A parte de "Temas Livres" ao final deste documento está aberta para quem quiser contribuir. Deixei alguns temas como exemplo.. a idéia colocar soluções para problemas do dia-a-dia que usuários podem enfrentar e servir como referência para consulta.
+
+Entre em contato, ou submeta um pull request com o fix caso encontre erro neste documento.
+
 =cut
 #   Ha muito tempo tenho vontade de criar um tutorial para ajudar o pessoal que está aprendendo ou quer aprender mais sobre a linguagem.
 #   Então fiz este tutorial para os brasileiros e falantes da lingua portuguesa de plantão interessados em aprender a linguagem de programação perl.
@@ -674,6 +680,7 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       [5] "terceiro"
     #   ] at t.pl line 4.
 
+    # agora vou transformar essa lista em uma lista ordenada
     my     %form      = %{{@palavras}};
     warn p %form;
     #   {
@@ -682,7 +689,8 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       sobrenome   "segundo"
     #   } at t.pl line 8.
 
-    my @lista2 = map { $_ } @palavras;
+    # agora vou transformar a lista ordenada de volta em lista
+    my @lista2 = %form;
     warn p @lista2;
     #   [
     #       [0] "nome",
@@ -693,7 +701,7 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       [5] "terceiro"
     #   ] at t.pl line 12.
 
-    my $form_hash = { map { $_ } @palavras };
+    my $form_hash = { map { $_ } @lista2 };
     warn p $form_hash;
     #   \ {
     #       idade       "terceiro",
@@ -701,6 +709,15 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       sobrenome   "segundo"
     #   } at t.pl line 16.
 
+    my $form_hash = {@lista2};
+    warn p $form_hash;
+    #   \ {
+    #       idade       "terceiro",
+    #       nome        "primeiro",
+    #       sobrenome   "segundo"
+    #   } at t.pl line 16.
+
+    # retransforma em lista
     my @lista_3 = %{ $form_hash };
     warn p @lista_3;
     #   [
@@ -1274,6 +1291,21 @@ e outra opção seria executar o filtro sem grep e apenas dentro do map:
 =head2 Conexão com banco de dados
 
 =head2 Referências
+
+  perldoc
+  perl.org
+
+=head2 APÊNDICE
+
+=head3 TEMA LIVRE
+
+=head4 manipulando arquivos excel com perl
+
+#TODO..
+
+=head4 acessar páginas de internet com perl
+
+#TODO..
 
 =head2 AUTHOR
 
