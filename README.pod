@@ -354,10 +354,11 @@ Por padrão todas as variáveis começam com $ e devem ser declaradas com 'my'. 
 
 =head3 Tipos de variáveis / Estrutura de dados:
 
-    my $var         = [1, 2, 3];
-    my $var         = Some::Module->new();
-    my @list        = ("nome","jão");
-    my %hash        = @list;
+    my $var         = [1, 2, 3];                                # ARRAY
+    my $pessoa      = { nome => 'jão', idade => 'dimenor' };    # HASH
+    my $var         = Some::Module->new();                      # referencia a objeto
+    my @list        = ("nome","jão");                           # lista, c/ 2 itens
+    my %hash        = @list;                                    # lista em contexto associativo, ex: nome => jão
 
 =head2 scalar
 
@@ -1052,15 +1053,156 @@ Em perl um objeto é apenas uma estrutura de dados que sabe a qual classe ela pe
 
 No fundo os objetos são um hash que tem uma 'classe' identificadora diferente do tradicional HASH. Ao invés de HASH, vai aparecer Nome::Modulo.
 
+Todas as classes em perl precisam ser finalizadas com um "1;" no final delas, Segue um exemplo simples de um módulo:
+
+    package Minha::Classe;    #nome da minha classe
+    use strict;               
+    use warnings;
+
+    # metodo pular
+    sub pular {
+        my ( $self ) = @_; 
+        warn "pular";
+    }
+
+    1;  #última linha da classe
+
+Aparentemente este 1 é o último comando executado ao fazer uso com 'use' ou 'require'. Ou seja, o interpretador evalua o código e a última linha é o 1, que retorna verdadeiro, indicando que tudo que veio antes foi evaluado corretamente. Caso o 1 não seja retornado, o interpretador entende que pode ter ocorrido uma falha durante a leitura desse módulo consequentemente resultando em erro.
+
 =head3 Class::Accessor
 
+    $ perldoc Class::Accessor
 
+O Class::Accessor é um excelente módulo para criar classes. Dada uma lista de atributos (passada pra mk_accessors) ele cria todos os accessors da sua classe. Isso facilida bastante pois não há necessidade de criar getters e setters. Só preciso me peocupar com os atributos em si. 
 
+Este módulo era muito utilizado antes do lançamento do Moose e do Moo e Mouse. 
 
+    package Foo;
+    use base qw|Class::Accessor|;
+    Foo->mk_accessors( qw| nome idade | );
+
+    use  DDP;
+    my $f = Foo->new();
+    $f->idade( 'dimenor' );     #método para setar o valor do atributo idade.
+    warn $f->idade;             #retorna o valor atual do atributo
+    warn $f->{_idade};          #variável interna onde o class accessor guarda os valores
+    warn p $f;
 
 =head3 Moose
+
+O Moose extende o sistema padrão de objetos do perl. Ao mesmo tempo o Moose junta as melhores e mais atuais boas práticas utilizadas nas mais diversas linguagens de programação. O foco principal do moose é permitir que programadores foquem mais no que precisam fazer e menos na mecânica de relacionamento a objetos. Um exemplo deste tipo de facilidade, são os getters e setters.. normalmente é necessário criar os getters e setters manualmente e isso é repetitivo e tedioso por ser manual, então o Moose permite que seja declarado apenas os atributos e os getters e setters são criados automaticamente. Nesse exemplo o foco se resume à criação de atributos.
+
+O Moose pode ser bem complexo, mas o basicão dele é simples de entender. Além de definir os atributos e métodos, tambem oferece facilidades não encontradas nos sistemas de orientação a objetos encontrados por ai.. por exemplo: suporte a Roles, Traits, modificadores de métodos (before, around, after)
+
+Exemplo de classe com Moose:
+
+primeiro vou criar uma classe pessoa. Toda pessoa tem um nome, e uma idade. E são atributos que guardam valores relacionados à pessoa. Toda pessoa pode falar, então há um método 'falar' na classe pessoa.
+
+    package Pessoa;
+    use Moose;
+
+    has nome  => ( is => 'rw' );
+    has idade => ( is => 'rw' );
+
+    sub falar {
+        my ( $self ) = @_;
+        warn "falando.."; 
+    }
+
+    1;
+
+agora vou criar uma "Role" chamada Atleta. Rola quer dizer papel, ou seja, é como se fosse um papel a mais que eu posso aplicar em cima de uma outra classe. Por exemplo, se tenho uma classe Pessoa , poderia criar uma Classe Atletas que contempla o conhecimento necessário para atletas. Posteriormente poderia criar uma classe que herda de Pessoa e aplica a Role Atleta, gerando assim uma nova classe de PessoaAtleta, veja o exemplo:
+
+    package Atleta;
+    use Moose::Role;
+
+    sub correr {
+        my ( $self ) = @_; 
+        warn qq{meu nome é $self->{nome} e vou correr};
+    }
+
+    1;
+
+e agora vou criar uma classe PessoaAtleta que extende a classe Pessoa. E aplica a role 'Atleta'.
+
+    package PessoaAtleta;
+    use Moose;
+    extends qw|Pessoa|;
+    with qw|Atleta|;
+
+    1;
+
+E este é o uso da minha classe PessoaAtleta:
+
+    use DDP;
+    my $f = PessoaAtleta->new();
+    $f->nome('Jão');
+    $f->idade( 'dimenor' );     #método para setar o valor do atributo idade.
+    warn $f->idade;             #retorna o valor atual do atributo
+    warn $f->correr;
+    warn p $f;
+
+Outra facilidade do moose, é poder passar os atributos a serem populados já no método new. Tambem é possível passar um objeto hash.
+
+    my $p2 = PessoaAtleta->new(
+        nome    => 'Jão',
+        idade   => 'dimenor'
+    );
+    warn $p2->correr;
+    warn $p2->nome;
+    warn p $p2;
+
 =head3 Moo
 
+O Moo veio após o Moose principalmente pois algumas pessoas queriam melhorar o desempenho do Moose, no entanto algumas funcionalidades essenciais do moose (dependendo do uso) influenciam no tempo de inicialização do objeto. Para a maioria dos projetos, esse tempo é irrelevante, mas em projetos onde microsegundos fazem a diferença entre lucro ou prejuízo pressionou para a criação de algo similar ao Moose mas sem todas as funcionalidades e que fosse muito mais rápido.
+
+O Moo tem o básico do Moose e é compatível com Moose. Então é possível criar uma classe Pessoa, Atleta e PessoaAtleta da segunte maneira com Moo:
+
+    package Pessoa;
+    use Moo;
+
+    has nome  => ( is => 'rw' );
+    has idade => ( is => 'rw' );
+
+    sub falar {
+        my ( $self ) = @_;
+        warn "falando.."; 
+    }
+
+    1;
+
+    package Atleta;
+    use Moo::Role;
+
+    sub correr {
+        my ( $self ) = @_; 
+        warn qq{meu nome é $self->{nome} e vou correr};
+    }
+
+    1;
+
+    package PessoaAtleta;
+    use Moo;
+    extends qw|Pessoa|;
+    with qw|Atleta|;
+
+    1;
+
+    use DDP;
+    my $f = PessoaAtleta->new();
+    $f->nome('Jão');
+    $f->idade( 'dimenor' );     #método para setar o valor do atributo idade.
+    warn $f->idade;             #retorna o valor atual do atributo
+    warn $f->correr;
+    warn p $f;
+
+    my $p2 = PessoaAtleta->new(
+        nome    => 'Jão',
+        idade   => 'dimenor'
+    );
+    warn $p2->correr;
+    warn $p2->nome;
+    warn p $p2;
 
 =head2 Map e Grep
 
