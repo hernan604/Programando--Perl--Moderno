@@ -1487,6 +1487,31 @@ O grep funciona como um filtro e retorna os itens que passam o filtro. Ou seja, 
     my @menores_q_6 = grep { $_ < 6 } @lista;
     use DDP ; warn p @menores_q_6;
 
+Ou se tivesse uma lista e precisasse filtrar os nomes que terminam em a:
+
+    my @nomes = (qw|  joao maria marniana joana jorge renato debora beatriz   |);
+    my @terminando_em_a = grep { $_ =~ /a$/ } @nomes; #poderia ser assim tb: grep { /a$/ } @nomes;
+    use DDP; warn p @terminando_em_a;
+
+Tambem é possível trabalhar com os atributos de objetos. Este caso faz grep no atributo nome terminando em a.
+
+    my @pessoas = (
+        #pessoa 1
+        {
+            nome => 'joao'
+        },
+        #pessoa 2
+        {
+            nome => 'maria',
+        },
+        #pessoa 3
+        {
+            nome => 'debora',
+        },
+    );
+    my @terminando_em_a = grep { $_->{ nome } =~ /a$/ } @pessoas;
+    use DDP; warn p @terminando_em_a;
+
 Então o que dá pra perceber é que map trabalha em cima de uma lista, e pode retornar uma lista.  Grep tambem, trabalha em cima de uma lista e pode retornar uma lista. Isso quer dizer que os comandos são compatíveis para serem usados em conjunto, pois dada uma lista, o map pode ser usado junto com um grep que retorna uma lista e passa para o map executar em seguida. Veja o exemplo, muito bom que foi publicado na internet em http://www.pal-blog.de/entwicklung/perl/perl-map-und.html?utm_source=pal-blog&utm_medium=RSS&utm_campaign=RSS: 
 
 Suponha que você tem uma lista de números, e precisa saber quais são menores que dez, e multiplicar esses itens por 2.
@@ -1520,6 +1545,82 @@ e outra opção seria executar o filtro sem grep e apenas dentro do map:
 
     my @a = (10,1,3,42,5,2,666,9);
     my @b = map { if ($_ < 10) { $_ * 2 } else { () } } @a;
+
+=head3 Sort
+
+sort por atributos
+sort simples
+reverse sort
+sort keys hash
+reverse sort keys hash
+
+    $ perldoc -f sort
+
+ordenação numérica
+
+    my @numbers = (qw(2 43 5 6 7 4 2 1 3 5 63  34 2 22 3 4 5));
+    my @sorted  = sort { $a <=> $b } @numbers;  #sort numérico
+    use DDP; warn p @sorted;
+
+ordenação alfabética
+
+    my @nomes = (qw|maria joao gabriela helena alan tiago zico ricardo rogério|);
+    my @sorted_nomes = sort @nomes;
+    use DDP; warn p @sorted_nomes;
+
+ordenação por atributo
+
+    my @pessoas = (
+        {
+            nome => 'maria',
+        },
+        {
+            nome => 'joao',
+        },
+        {
+            nome => 'gabriela',
+        },
+        {
+            nome => 'helena',
+        },
+    );
+    my @sorted_pessoas = sort { $a->{ nome } cmp $b->{ nome } } @pessoas;
+    use DDP; warn p @sorted_pessoas;
+
+ordenação de chaves de um hash
+
+    my $hash = {
+        c => '',
+        b => '',
+        a => ''
+    };
+    #sort
+    my @sorted_keys_hash = sort keys $hash;
+    warn p @sorted_keys_hash;
+    #reverse sort
+    my @reverse_sorted_keys_hash = reverse sort keys $hash;
+    warn p @reverse_sorted_keys_hash;
+
+ordenação por chaves de uma lista ordenada
+
+    my %form = (
+        cc => '',
+        bb => '',
+        aa => '',
+    );
+    my @sorted_keys_form = sort keys %form;
+    warn p @sorted_keys_form;
+
+Ordenação por valores de um hash
+
+    #ordenando por valor:
+    my %form = (
+        cc => 'aa',
+        bb => 'bb',
+        aa => 'cc',
+    );
+    my @sorted_values_form = sort { $form{$a} cmp $form{$b} } keys %form;
+    warn p @sorted_values_form;
 
 =head4 Itens vazios na lista de retorno
 
