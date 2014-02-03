@@ -430,7 +430,9 @@ lista (lista é o @ arroba):
 
 Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opção chamada "qw" que coloca os as aspas automaticamente. Mas só funciona para palavras sem 'traço' ou espaços. ex:
 
-    @lista = (  qw|item1 item2 item3|  );    #é a mesma coisa que @lista = ( 'item1', 'item2', 'item3' );
+    @lista = (  qw|item1 item2 item3|  );    
+    #é a mesma coisa que 
+    @lista = ( 'item1', 'item2', 'item3' );
 
 Lembre-se, um scalar é sempre uma coisa apenas. E a lista pode ser mais de uma coisa.
 
