@@ -8,7 +8,7 @@ Este documento ainda está em desenvolvimento.
 
 =head2 RESUMO
 
-O público alvo deste tutorial é principalmente novos programadores da linguagem perl. A intenção é que este manual tenha qualidade suficiente para servir e atrair mais e mais programadores ao fantástico universo da linguagem perl. A intenção inicial do autor é esclarecer dúvidas que o próprio autor gostaria que lhe tivessem sido esclarecidas o quanto antes.
+O público alvo deste tutorial é principalmente novos programadores da linguagem perl. A intenção é que este manual tenha qualidade suficiente para servir de referência e atrair mais e mais programadores ao fantástico universo da linguagem perl. A intenção inicial do autor é esclarecer dúvidas que o próprio autor gostaria que lhe tivessem sido esclarecidas o quanto antes.
 
 A parte de "Temas Livres" ao final deste documento está aberta para quem quiser contribuir. Deixei alguns temas como exemplo.. a idéia colocar soluções para problemas do dia-a-dia que usuários podem enfrentar e servir como referência para consulta.
 
