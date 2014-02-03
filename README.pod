@@ -1630,6 +1630,25 @@ As vezes é preciso jogar vazio na lista de retorno. A primeira intenção é jo
     my @terminando_em_a     = map {  if ( $_ =~ m!a$! ) { $_ } else { () } } @lista;
     warn p @terminando_em_a;
 
+=head2 Testes
+
+Por padrão todos os módulos perl vêm com testes. Os testes se encontram no diretório ./t/ dentro do diretório do módulo. Os testes nada mais são que automatizações que tentam executar a aplicação com objetivo de provar que a app/módulo está funcionando. O mesmo teste pode ser executado em outra versão de perl ou outro tipo de máquina e tem que funcionar em todas por igual.
+
+A suíte/framework de testes mais famosa é o Test::More pois ela é completa e tambem é simples de usar.
+
+    $ perldoc Test::More
+
+=head3 Test::More
+
+    use Test::More tests => 23;     # exige que seja executado exatamente 23 testes
+    use Test::More;                 # executa testes até encontrar comando: "done_testing()"
+
+    ok  ($got eq $expected, $test_name);  # um teste
+    is  ($got, $expected, $test_name);    # outro teste
+    isnt($got, $expected, $test_name);    # outro teste
+    
+    done_testing(); #indica que chegou ao fim para printar stats
+
 =head2 Conexão com banco de dados
 
 =head2 Referências
