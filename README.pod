@@ -73,7 +73,7 @@ E para instalar módulos com o cpanm:
 
 =head3 local::lib
 
-O local::lib é uma alternativa ao perlbrew. Bastante utilizada.
+O local::lib é uma alternativa ao perlbrew. Esta veio muito antes do perlbrew e é altamente testada, recomendada e utilizada.
 
   #TODO
 
@@ -163,10 +163,10 @@ Tudo isso pode ser encontrado através de links dentro de um módulo no cpan e m
 
 Veja exemplo de matriz de testes, é possível ver a versão perl e plataforma. E, na coluna esquerda é possível ver um resumo da evolução e versão dos módulos.
 
-  http://www.cpantesters.org/distro/N/Net-Twitter.html#Net-Twitter-4.01002?oncpan=1&distmat=1
-  http://www.cpantesters.org/distro/M/Mojolicious.html#Mojolicious-4.72?oncpan=1&distmat=1
-  http://www.cpantesters.org/distro/D/Dancer.html#Dancer-1.3120?oncpan=1&distmat=1
-  http://www.cpantesters.org/distro/S/Spreadsheet-ParseExcel-Simple.html#Spreadsheet-ParseExcel-Simple-1.04?oncpan=1&distmat=1
+    http://www.cpantesters.org/distro/N/Net-Twitter.html#Net-Twitter-4.01002?oncpan=1&distmat=1
+    http://www.cpantesters.org/distro/M/Mojolicious.html#Mojolicious-4.72?oncpan=1&distmat=1
+    http://www.cpantesters.org/distro/D/Dancer.html#Dancer-1.3120?oncpan=1&distmat=1
+    http://www.cpantesters.org/distro/S/Spreadsheet-ParseExcel-Simple.html#Spreadsheet-ParseExcel-Simple-1.04?oncpan=1&distmat=1
 
 Existe até um ranking para saber quem testou mais módulos:
 
@@ -303,7 +303,22 @@ Métodos com orientação a objeto recebem o $self como primeiro argumento. $sel
         my ( $self, $nome ) = @_;
     }
 
-Os argumentos sempre chegam no @_.
+Os argumentos sempre chegam na lista @_. O @_ começa com @ portanto é uma lista. É uma variável especial que representa a lista de argumentos recebida. Então é possível criar uma lista de variáveis  equalizar com a lista recebida, isto fará cada variável conter o valor que chegou, ex: 
+
+    
+    my @argumentos = ( 'argumento_1', 'argumento_2' );
+    my ( $__arg1, $__arg2 ) = @argumentos;   # equaliza lista da esquerda com a da direita
+    warn $__arg1;   #printa o valor referente à lista da direita no momento da atribuição
+    warn $__arg2;   #printa o valor referente à lista da direita no momento da atribuição
+
+    my $metodo     = sub { 
+        my ( $arg1, $arg2 ) = @_; #equaliza a lista de argumentos de entrada (@_) com a lista da esquerda
+        warn "ARG1: ". $arg1;   # printa o valor referente
+        warn "ARG2: ". $arg2;   # printa o valor referente
+    };
+    $metodo->( @argumentos ); #passa a lista como argumento
+
+
 Você não passa o $self, ele é passado automaticamente para você sempre que trabalha com orientação a objetos.
 Eu poderia chamar tanto o primeiro quanto o segundo método da segunte maneira:
 
