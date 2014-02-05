@@ -204,14 +204,16 @@ Metacpan é um cpan com cara mais nova. Ele foi criado para ser uma alternativa 
 
 =head2 Ajuda
 
-As instalações perl inclúem por padrão o perldoc, que nos ajuda como referência e manual de uso.
-Através dele é possível visualizar os manuais de módulos e funções. É similar ao comando "man", e sempre é possível executar um "man Nome::Modulo"
+As instalações perl inclúem por padrão o perldoc, programas que nos ajuda como referência e manual de uso.
+Através dele é possível visualizar os documentação/manuais de módulos e funções. É similar ao comando "man", e sempre é possível executar um "man Nome::Modulo"
 
 Exemplo para ler os manuais de pragmas internos do perl:
 
+    $ perldoc perl     # índice
     $ perldoc pragma
     $ perldoc strict
     $ perldoc warnings
+    $ perldoc perldoc  ou na fonte: https://metacpan.org/pod/release/MALLEN/Pod-Perldoc-3.21/perldoc.pod
 
 Exemplo para ler manual de um módulo:
 
