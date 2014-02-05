@@ -712,7 +712,7 @@ primeiro um arrau com um item que é uma lista vazia
     my $array = [
       'um', 
       'dois', 
-      (),       # este valor é igual a array em branco, que é igual a nada neste caso.
+      (),       # este valor é igual a lista em branco, que é igual a nada neste caso.
                 # pois () é sempre uma lista de itens, então aqui é uma lista de itens
                 # vazia neste caso.. consequentemente acaba não contando como item nenhum.
       'tres'
@@ -986,18 +986,26 @@ Tem tudo no perlre.
 
 =head3 Matches
 
-As regex retornam por padrão uma lista de matches. Então eu posso fazer algo assim:
+As regex retornam por padrão uma lista de matches. Então é possível trabalhar da seguinte maneira
+
+Automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
 
     my   $texto = "Jão dimenor";
-    my ( $nome, $idade ) = $texto =~ m/(.+) (.+)/ig; # automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
+    my ( $nome, $idade ) = $texto =~ m/(.+) (.+)/ig; 
     warn $nome;
     warn $idade;
 
-    my   $total = ( $nome, $idade ) = $texto =~ m/(.+) (.+)/ig; # automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
+$nome recebe o valor do primeiro grupo de capturas, $idade recebe valor do segundo. $total recebe o total de itens na lista à direita;
+
+    my   $total = ( $nome, $idade ) = $texto =~ m/(.+) (.+)/ig;
     warn $total;
 
-    my   $total =()= $texto =~ m/(.+) (.+)/ig; # automaticamente $nome recebe o valor do primeiro grupo de matches e $idade recebe o valor do segundo match
+Esta opção permite contar quantas matches ocorreram, e grupos nomeados
+
+    my   $total =()= $texto =~ m/(?<nome>.+) (?<idade>.+)/ig;
     warn $total;
+    warn $nome;
+    warn $idade;
 
 =head3 Quantidade de matches
 
@@ -1258,7 +1266,11 @@ O conteúdo pode ser obtido de muitas maneiras e depende de caso a caso. Por exe
 =head3 Printar todas as linhas de um arquivo
 
     open
-    open( FH , "<" , "README.pod" ) ; while( <FH> ) { print $_ ; print "----------\n"; }  
+    open( FH , "<" , "README.pod" ) ; 
+    while( <FH> ) { 
+        print $_ ; 
+        print "----------\n"; 
+    }  
 
 =head3 Printar determinado número de bytes de arquvio
 
@@ -1323,7 +1335,7 @@ Aparentemente este 1 é o último comando executado ao fazer uso com 'use' ou 'r
 
     $ perldoc Class::Accessor
 
-O Class::Accessor é um excelente módulo para criar classes. Dada uma lista de atributos (passada pra mk_accessors) ele cria todos os accessors da sua classe. Isso facilida bastante pois não há necessidade de criar getters e setters. Só preciso me peocupar com os atributos em si. 
+O Class::Accessor é um excelente módulo para criar classes. Dada uma lista de atributos (passada pra mk_accessors) ele cria todos os accessors da sua classe. Isso facilida bastante pois não há necessidade de criar getters e setters. Consequentemente sobra mais tempo para se preocupar com os atributos em si. 
 
 Este módulo era muito utilizado antes do lançamento do Moose e do Moo e Mouse. 
 
@@ -1548,11 +1560,7 @@ e outra opção seria executar o filtro sem grep e apenas dentro do map:
 
 =head3 Sort
 
-sort por atributos
-sort simples
-reverse sort
-sort keys hash
-reverse sort keys hash
+*TODO sort por coluna
 
     $ perldoc -f sort
 
@@ -1630,6 +1638,37 @@ As vezes é preciso jogar vazio na lista de retorno. A primeira intenção é jo
     my @terminando_em_a     = map {  if ( $_ =~ m!a$! ) { $_ } else { () } } @lista;
     warn p @terminando_em_a;
 
+=head4 Itens que aparecem em duas listas
+
+O map e grep tambem podem ajudar quando é necessário saber quais items estão presentes em duas listas.
+
+    use DDP; 
+    use strict; 
+    use warnings; 
+    my @list    = (qw|1 2 3 4 5|); 
+    my @list2   = (qw| 2 3 10 20 30 40 6 7 8|); 
+    my $items   = {map { $_ => 1 } @list }; 
+    my @on_both = grep { exists $items->{ $_ } } @list2; 
+    warn p @on_both;
+
+Itens presentes nas duas listas:
+
+    #saída
+    #[
+    #    [0] 2,
+    #    [1] 3
+    #] at t.pl line 16.
+
+Uma outra opção igual à acima jogar o map direto ao invés de declarar $items, ficando da seguinte maneira:
+
+    use DDP; 
+    use strict; 
+    use warnings; 
+    my @list        = (qw|1 2 3 4 5|); 
+    my @list2       = (qw| 2 3 10 20 30 40 6 7 8|); 
+    my @on_both     = grep { exists {map { $_ => 1 } @list }->{ $_ } } @list2; 
+    warn p @on_both;
+
 =head2 Testes
 
 Por padrão todos os módulos perl vêm com testes. Os testes se encontram no diretório ./t/ dentro do diretório do módulo. Os testes nada mais são que automatizações que tentam executar a aplicação com objetivo de provar que a app/módulo está funcionando. O mesmo teste pode ser executado em outra versão de perl ou outro tipo de máquina e tem que funcionar em todas por igual.
@@ -1650,6 +1689,20 @@ A suíte/framework de testes mais famosa é o Test::More pois ela é completa e 
     done_testing(); #indica que chegou ao fim para printar stats
 
 =head2 Conexão com banco de dados
+
+Tutorial avançado de DBI by Tim Bunce: http://www.slideshare.net/Tim.Bunce/dbi-advanced-tutorial-2007
+
+=head3 DBI
+
+    $ perldoc DBI
+
+    http://dbi.perl.org/
+
+O DBI é a interface padrão de bancos de dados. O DBI fornece métodos, variáveis e convenções para manter a interface de dados consistente e independente do banco de dados em uso. Em outras palavras, o mesmo código tem que rodar em qualquer banco de dados sem precisar mexer no código. Isto quer dizer, caso decida testar outros bancos ou mudar o banco não será necessário alterar nenhuma linha de código. Seriam alterados apenas os dados de conexão e autenticação da conexão.
+
+=head3 DBIx::Class
+
+=head3 Fey::ORM
 
 =head2 Referências
 
