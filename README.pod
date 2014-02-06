@@ -921,6 +921,25 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       [5] "primeiro"
     #   ] at t.pl line 20.
 
+
+É possível encadear comandos que usam o mesmo tipo retornado, por exemplo: 
+
+    perl -e ' my @l=(qw|aa bb cc dd|); my $tmp={}; my $l2= {reverse reverse sort grep { if ( ! exists $tmp->{$_} ) { $tmp->{$_} =1 ; } } map { $_ => $_ } split ",", (join (",", @l))}; use DDP; warn p $l2;  '
+
+neste caso os comandos reverse, sort, grep, map e split esperam uma lista como entrada e tambem retornam uma lista, logo, eles podem ser encadeados. Todos eles estão dentro de {}, transformando a lista retornada em hash: $l2 = { ...lista retornada ... }
+
+Seria o mesmo que fazer:
+
+    use DDP;
+    my     @palavras  = ( qw| nome primeiro sobrenome segundo idade terceiro| );
+    my     $form      = {@palavras};
+    warn p $form;
+    #   {
+    #       idade       "terceiro",
+    #       nome        "primeiro",
+    #       sobrenome   "segundo"
+    #   } at t.pl line 8.
+
 =head3 coma e Fat-coma, virgula e virgula gorda
 
 Existe a virgula e a virgula-gorda. Ambas são a mesma coisa, só muda para representação visual.
@@ -1715,8 +1734,38 @@ O DBI é a interface padrão de bancos de dados. O DBI fornece métodos, variáv
 
 =head3 TEMA LIVRE
 
-Esta seção é destinada a pessoas interessadas em colaborar com soluções pontuais que sirvam como referência a outros usuários.
+Esta seção é destinada a pessoas interessadas em colaborar com soluções pontuais que sirvam como dicas e referência para outros usuários.
 Deixo alguns exemplos de soluções pontuais que me interessaria conhecer.
+
+=head4 Trabalhando com formulários ascii
+
+Esta dica é ótima para pessoas que precisam imprimir boletos, ou fomulários ascii, por exemplo:
+
+    ,=============================================================.
+    | COD. | NOME COMPLETO                            | STATUS    |
+    | 44   | Jao da Silva                             | casado    |
+    | 23   | Jorge Pereira                            | solteiro  |
+    | 32   | David Ramos                              | casado    |
+
+Existe um módulo específico para isso. O Perl6::Form. Com ele é possível criar qualquer tipo de formulário. O módulo alinha o texto de acordo com o layout escolhido. 
+
+O exemplo a seguir mostra como printar uma lista de valores em 3 colunas usando listas e '[' como opção de layout que quer dizer 'preencha todas as linhas a seguir com dados de uma lista'
+
+    use strict;
+    use warnings;
+    use Perl6::Form;
+
+    my @cods = (qw|44 23 32|);
+    my @nomes = ('Jao da Silva', 'Jorge Pereira', 'David Ramos' );
+    my @status = (qw|casado solteiro casado|);
+
+    my $text = form      ",=============================================================.",
+                         "| COD. | NOME COMPLETO                            | STATUS    |",
+                         "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+                         "| {[[} | {[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[} | {[[[[[[[} |",
+                            \@cods , \@nomes,                                 \@status;
+
+    warn $text;
 
 =head4 manipulando arquivos excel com perl
 
