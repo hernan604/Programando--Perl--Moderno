@@ -1077,7 +1077,19 @@ A instalação de módulos é bastante simples. Com o nome de módulo em mãos, 
 
 O cpanm é o instalador de módulos mais indicado hoje em dia. É super simples e fácil de usar e instalar.
 
-Se houver erro durante a instalação, será apresentado um log junto à mensagem de erro. É importante ler este log, principalmente no final, e localizar a parte onde ocorreu o erro. As vezes um módulo pode ter como pré-requisito/dependência uma lib no sistema.
+=head3 cpanm
+
+O cpanm é um instalador de módulos. Ele pode instalar módulos do cpan, ou a partir de arquivos locais, ou de qualquer url, entre outras opções avançadas. O mais comum é usar o comando para instalar um módulo do cpanm com o comando cpanm
+
+O cpanm se identifica como sendo a versão mini da app cpan (instalador padrão de módulos). Mini no sentido de ter pouco código e opções mais refinadas.
+
+    $ cpanm Modulo::Bla
+
+Para ver todas as opções
+
+    $ cpanm --help
+
+Durante a instalação de um módulo, se houver erro, será apresentado um log junto à mensagem de erro. É importante ler este log, principalmente no final, e localizar a parte onde ocorreu o erro. As vezes um módulo pode ter como pré-requisito/dependência uma lib no sistema.
 
 Por exemplo, para trabalhar com imagens, é sempre bom instalar as libs:
 
@@ -1098,18 +1110,6 @@ Todos os módulos perl vem com testes, e alguns módulos mais usados as vezes te
 Outra opção é forçar uma instalação que tenha falha durante a execução dos testes.
 
     cpanm --force   Nome::Modulo
-
-=head3 cpanm
-
-O cpanm é um instalador de módulos. Ele pode instalar módulos do cpan, ou a partir de arquivos locais, ou de qualquer url, entre outras opções avançadas. O mais comum é usar o comando para instalar um módulo do cpanm com o comando cpanm
-
-O cpanm se identifica como sendo a versão mini da app cpan (instalador padrão de módulos). Mini no sentido de ter pouco código e opções mais refinadas.
-
-    $ cpanm Modulo::Bla
-
-Para ver todas as opções
-
-    $ cpanm --help
 
 =head3 cpan
 
@@ -1331,7 +1331,7 @@ Todas as classes em perl precisam ser finalizadas com um "1;" no final delas, Se
 
     1;  #última linha da classe
 
-Aparentemente este 1 é o último comando executado ao fazer uso com 'use' ou 'require'. Ou seja, o interpretador evalua o código e a última linha é o 1, que retorna verdadeiro, indicando que tudo que veio antes foi evaluado corretamente. Caso o 1 não seja retornado, o interpretador entende que pode ter ocorrido uma falha durante a leitura desse módulo consequentemente resultando em erro.
+Este 1 é o último comando executado ao fazer uso com 'use' ou 'require'. Ou seja, o interpretador evalua o código e a última linha é o 1, que retorna verdadeiro, indicando que tudo que veio antes foi evaluado corretamente. Caso o 1 não seja retornado, o interpretador entende que pode ter ocorrido uma falha durante a leitura desse módulo consequentemente resultando em erro.
 
 =head3 Class::Accessor
 
@@ -1375,7 +1375,7 @@ primeiro vou criar uma classe pessoa. Toda pessoa tem um nome, e uma idade. E s�
 
     1;
 
-agora vou criar uma "Role" chamada Atleta. Rola quer dizer papel, ou seja, é como se fosse um papel a mais que eu posso aplicar em cima de uma outra classe. Por exemplo, se tenho uma classe Pessoa , poderia criar uma Classe Atletas que contempla o conhecimento necessário para atletas. Posteriormente poderia criar uma classe que herda de Pessoa e aplica a Role Atleta, gerando assim uma nova classe de PessoaAtleta, veja o exemplo:
+agora vou criar uma "Role" chamada Atleta. Role quer dizer papel, ou seja, é como se fosse um papel a mais que eu posso aplicar em cima de uma outra classe. Por exemplo, se tenho uma classe Pessoa , poderia criar uma Classe Atletas que contempla o conhecimento necessário para atletas. Posteriormente poderia criar uma classe que herda de Pessoa e aplica a Role Atleta, gerando assim uma nova classe de PessoaAtleta, veja o exemplo:
 
     package Atleta;
     use Moose::Role;
