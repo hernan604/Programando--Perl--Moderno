@@ -1713,6 +1713,8 @@ A suíte/framework de testes mais famosa é o Test::More pois ela é completa e 
 
 Tutorial avançado de DBI by Tim Bunce: http://www.slideshare.net/Tim.Bunce/dbi-advanced-tutorial-2007
 
+Para trabalhar com banco de dados é necessário instalar o módulo do banco de dados que será utilizado
+
 =head3 DBI
 
     $ perldoc DBI
@@ -1722,6 +1724,20 @@ Tutorial avançado de DBI by Tim Bunce: http://www.slideshare.net/Tim.Bunce/dbi-
 O DBI é a interface padrão de bancos de dados. O DBI fornece métodos, variáveis e convenções para manter a interface de dados consistente e independente do banco de dados em uso. Em outras palavras, o mesmo código tem que rodar em qualquer banco de dados sem precisar mexer no código. Isto quer dizer, caso decida testar outros bancos ou mudar o banco não será necessário alterar nenhuma linha de código. Seriam alterados apenas os dados de conexão e autenticação da conexão.
 
 =head3 DBIx::Class
+
+dbicdump, com ele é possível automatizar a geração de todos os models a partir de uma conexão com o banco de dados. Ou seja, o dbicdump vai conectar no banco especificado, listar as tabelas e colunas. Se o banco de dados tiver suporte ele consegue detectar os relacionamentos. No final será gerado um diretório com o as classes do seu módulo ORM para conexão com esse DB. 
+
+Feito isso já é possível usar esse módulo para conectar no banco de dados etc. 
+
+    dbicdump -o dump_directory=./lib \
+    -o components='["InflateColumn::DateTime"]' \   <-- *** nao obrigatorio
+    -o debug=1 \
+    My::Schema \
+    'dbi:Pg:dbname=foo' \
+     myuser \
+    mypassword
+
+Quais relacionamentos são detectados automaticamente ? has one, has many, belongs to. Many to many não é detectado automaticamente e tem que ser adicionado manualmente.
 
 =head3 Fey::ORM
 
