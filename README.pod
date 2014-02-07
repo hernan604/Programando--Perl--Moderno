@@ -244,14 +244,25 @@ Isso quer dizer que ele vai apenas chamar seu script e executar.
 
 Existem outras opções ótimas para desenvolvedores, que possibilitam usar versões especificas de módulos que o script esteja usando. Ou seja, supondo que 'meu_script.pl' vai usar o módulo Modulo::XYZ, no caso acima seria usada a versão que está instalada junto com minha versão de perl atual.
 
-No entanto eu posso indicar um diretório onde esse módulo está, utilizando o argumento -I../diretorio/modulo/lib (i maiúscilo seguido do diretorio/lib ) assim:
+No entanto, na hora de executar é possível indicar o diretório onde esse módulo está, utilizando o argumento -I../diretorio/modulo/lib (i maiúscilo seguido do diretorio/lib ) assim:
 
     cd /home/usuario/script
     perl -I/Downloads/Modulo-XYZ/lib/ meu_script.pl
 
 Isso fará o script usar o Modulo::XYZ do diretório indicado: /Downloads/Modulo-XYZ/lib/ ao invés do que está instalado junto com seu perl.
 
-Isso é bastante útil na hora de debugar algum módulo externo. E tambem para usar módulos fazendo apenas o download e indicando o diterório do modulo/lib. Ou seja, não necessariamente precisaria instalar o módulo... eu posso indicar o local do módulo em tempo de execução. Para a aplicação é transparente. Dessa maneira é possível criar um 'bundle' que contém todos as depêndencias necessárias para executar o módulo.
+Isso é bastante útil na hora de debugar algum módulo externo. E tambem para usar módulos fazendo apenas o download e indicando o diterório do modulo/lib. Ou seja, não necessariamente precisaria instalar o módulo... só é necessário especificar o local do módulo em tempo de execução. Para a aplicação é transparente. Dessa maneira é possível criar um 'bundle' que contém todas as depêndencias necessárias para executar o módulo.
+
+Outra alternativa ao -I é usar o lib.
+
+    $ perldoc lib
+
+O lib recebe uma lista de diretórios onde tem módulos que precisam ser carregados. Portanto é possível fazer algo assim:
+
+    use lib '../Modulo1/lib/','../Modulo2/lib/';
+    ..codigo..
+
+Resumindo, é possível passar o diretório dos módulos no momento da execução e tambem é possível setar eles junto ao código fonte usando o módulo lib.
 
 =head2 Variáveis de ambiente
 
@@ -328,7 +339,7 @@ Eu poderia chamar tanto o primeiro quanto o segundo método da segunte maneira:
 
 e $nome teria valor de "Bla"
 
-Se eu quiser ter mais argumentos posso fazer:
+Se precisar passar mais argumentos é possível fazer:
 
     sub set_coisas {
         my ( $self, $coisa1, $coisa2, $coisa3 ) = @_;
@@ -339,7 +350,7 @@ Se eu quiser ter mais argumentos posso fazer:
     # $coisa2 = 'item2'
     # $coisa3 = 3
 
-Se eu quiser posso executar uma sub anonima:
+Tambem é possível executar uma sub anônima:
 
     sub { my ( $arg1, $arg2 ) = @_; .......  }->( "Argumento1", "Coisa2" )
 
@@ -375,7 +386,7 @@ Função anônima, posso simplesmente criar um método anônimo que recebe 2 arg
 
   perl -e 'sub { my ( $arg1, $arg2 ) = @_;  warn $arg1.$arg2 }->( "argumento1", "argumento2" ); '
 
-Ou eu posso criar essa closure anônima ( perldoc -f sub ) e receber a referência do método. podendo usar a variável como se fosse um método.
+Tambem é possível criar essa closure anônima ( perldoc -f sub ) e receber a referência do método. podendo usar a variável como se fosse um método.
 
   perl -e 'my $metodo = sub { my ( $arg1, $arg2 ) = @_;  warn $arg1.$arg2 };  warn "---"; $metodo->( "argumento1", "argumento2" ); '
 
@@ -430,15 +441,18 @@ lista (lista é o @ arroba):
         "coisa2"
     );
 
-Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opção chamada "qw" que coloca os as aspas automaticamente. Mas só funciona para palavras sem 'traço' ou espaços. ex:
+Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opção chamada "qw" que coloca os as aspas automaticamente. Mas só funciona para strings, ou números sem 'traço' ou espaços. ex:
 
     @lista = (  qw|item1 item2 item3|  );    
     #é a mesma coisa que 
     @lista = ( 'item1', 'item2', 'item3' );
 
+    # tambem é possível fazer:
+    @lista = ( qw|item1 item2|, 'item3', qw|item4|, $item5 );
+
 Lembre-se, um scalar é sempre uma coisa apenas. E a lista pode ser mais de uma coisa.
 
-Então por exemplo, se eu chamar um método e passar minha lista para esse método, o que acontece ?
+Então por exemplo, se chamar um método e passar uma lista para esse método, o que acontece ?
 
     my @l=(qw|aa bb cc|);   #LISTA
     my $test = sub {                            # sub é tipo function no javascript. é declaração de método. neste caso joguei o método na variável $test
@@ -449,7 +463,7 @@ Então por exemplo, se eu chamar um método e passar minha lista para esse méto
     } ;
     $test->( @l ); # chamada passando a lista
 
-saida: cada item da lista caiu como um argumento.
+saida: cada item da lista caiu como um argumento. Pois a lista @l tinha 3 strings "aa" "bb" "cc".
 
     aa at -e line 1.
     bb at -e line 1.
