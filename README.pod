@@ -1264,7 +1264,7 @@ Ao usar a opção -I, behind the scenes os diretórios são inseridos em @INC.
 
 =head2 @INC %INC
 
-Entre as variáveis especiais no perl, existe a @INC e %INC. Elas são o caminho das pedras para o interpretador encontrar os módulos na hora de executar uma aplicação perl.
+Entre as variáveis especiais no perl, existe a @INC e %INC. Elas são o caminho das pedras para o interpretador encontrar os módulos na hora de executar uma aplicação perl. E tambem serve como caminho para o desenvolvedor ver quais módulos estão carregados antes de adicionar uma 'nova/desnecessária' dependência.
 
 O interpretador do perl é compilado com um @INC padrão, que inclúi o diretório base onde os módulos são instalados. Para alterar o padrão é possível usar: http://search.cpan.org/perldoc?INSTALL#otherlibdirs
 
