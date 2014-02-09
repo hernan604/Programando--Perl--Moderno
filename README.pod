@@ -16,15 +16,6 @@ Entre em contato, ou submeta um pull request com o fix caso encontre erro neste 
 
 Toda ajuda é bem vinda para melhorar este documento.
 
-=cut
-#   Ha muito tempo tenho vontade de criar um tutorial para ajudar o pessoal que está aprendendo ou quer aprender mais sobre a linguagem.
-#   Então fiz este tutorial para os brasileiros e falantes da lingua portuguesa de plantão interessados em aprender a linguagem de programação perl.
-#   A intenção é cobrir temas genéricos e relevantes para programação com perl.
-#   Como o assunto não é simples, contribuições de imediato são bem vindas para ajudar a melhorar o material. Adicione seu nome na área de "Colaboradores" caso decida colaborar.
-#   A parte mais legal de escrever este tutorial é a oportunidade que tenho de re-ler conceitos através do perldoc
-
-#   A idéia deste tutorial é oferecer um formato de leitura rápida e rápido entendimento para quem está aprendendo.
-
 =head2 Instalação do perl
 
 É imporante ressaltar que algumas máquinas linux, mac e bsd vem com um perl instalado por padrão. Esse perl é utilizado pela máquina para gerenciar N coisas e não é recomendável mexer nele pois sua máquina depende dele assim como suas aplicações. Para não gerar conflito de desinstalações e evitar quebras ou uso de root, recomanda-se a instalação de uma versão local, que fica dentro do diretório do seu usuário. Com essa configuração de perl local é possível instalar módulos sem a necessidade de usuário root. Isso tambem é importante pois separa bem quais usuários executam e tem acesso a quais partes do sistema.
@@ -1197,6 +1188,86 @@ Esta facilidade é muito boa para aplicações em produção, pois é possível 
     perl -I../Meu-Modulo/lib/ -I../Outro-Modulo/lib meu_modulo.pl
 
 Para desenvolvimento tambem é interessante usar módulos dessa maneira, caso contrário seria necessário re-instalar os módulos após cada alteração. Isso seria non-sense.
+
+Ao usar a opção -I, behind the scenes os diretórios são inseridos em @INC.
+
+=head2 @INC %INC
+
+Entre as variáveis especiais no perl, existe a @INC e %INC. Elas são o caminho das pedras para o interpretador encontrar os módulos na hora de executar uma aplicação perl.
+
+O interpretador do perl é compilado com um @INC padrão, que inclúi o diretório base onde os módulos são instalados. Para alterar o padrão é possível usar: http://search.cpan.org/perldoc?INSTALL#otherlibdirs
+
+    $ env -i perl -V   # env -i ignora PERL5LIB env var
+    $ perl -V          # para perlbrew
+
+Para visualizar o conteúdo de @INC ou %INC, dentro do seu script escreva:
+
+    use Data::Dumper; 
+    warn Dumper(\@INC);
+   
+tambem é possível fazer um one-liner:
+
+    $ perl -e 'use Data::Dumper; warn Dumper(\@INC)'
+    # saída
+    $VAR1 = [
+      '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/site_perl/5.17.7/x86_64-linux',
+      '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/site_perl/5.17.7',
+      '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/x86_64-linux',
+      '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7',
+      '.'
+    ];
+
+Agora, o conteúdo do %INC
+
+    $ perl -e 'use Data::Dumper; warn Dumper(\%INC) 
+    # saída 
+    $VAR1 = {
+      'Carp.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/Carp.pm',
+      'overload.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/overload.pm',
+      'bytes.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/bytes.pm',
+      'warnings/register.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/warnings/register.pm',
+      'utf8.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/utf8.pm',
+      'strict.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/strict.pm',
+      'unicore/lib/Perl/_PerlIDS.pl' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/unicore/lib/Perl/_PerlIDS.pl',
+      'utf8_heavy.pl' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/utf8_heavy.pl',
+      'warnings.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/warnings.pm',
+      'overloading.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/overloading.pm',
+      'XSLoader.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/XSLoader.pm',
+      'Data/Dumper.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/x86_64-linux/Data/Dumper.pm',
+      'Exporter.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/Exporter.pm',
+      'constant.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/constant.pm',
+      'vars.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/vars.pm',
+      'unicore/Heavy.pl' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/unicore/Heavy.pl'
+    };
+
+agora, vou fazer uso de alguns módulos e printar o %INC, é possível perceber que os módulos usados estão presentes no %INC:
+
+    $ perl -e 'use MIME::Base64; use Plack; use utf8; use Digest::SHA1; use Data::Dumper; warn Dumper(\%INC) '
+    # saída
+    $VAR1 = {
+      'utf8_heavy.pl' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/utf8_heavy.pl',
+      'warnings/register.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/warnings/register.pm',
+      'unicore/lib/Perl/_PerlIDS.pl' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/unicore/lib/Perl/_PerlIDS.pl',
+      'overload.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/overload.pm',
+      'Carp.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/Carp.pm',
+      'vars.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/vars.pm',
+      'Digest/base.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/Digest/base.pm',
+      'DynaLoader.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/x86_64-linux/DynaLoader.pm',
+      'unicore/Heavy.pl' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/unicore/Heavy.pl',
+      'Data/Dumper.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/x86_64-linux/Data/Dumper.pm',
+      'constant.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/constant.pm',
+      'utf8.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/utf8.pm',
+      'Config.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/x86_64-linux/Config.pm',
+      'Plack.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/site_perl/5.17.7/Plack.pm',
+      'MIME/Base64.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/x86_64-linux/MIME/Base64.pm',
+      'XSLoader.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/XSLoader.pm',
+      'Digest/SHA1.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/site_perl/5.17.7/x86_64-linux/Digest/SHA1.pm',
+      'overloading.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/overloading.pm',
+      'bytes.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/bytes.pm',
+      'warnings.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/warnings.pm',
+      'Exporter.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/Exporter.pm',
+      'strict.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/strict.pm'
+    };
 
 =head2 print vs warn vs say
 
