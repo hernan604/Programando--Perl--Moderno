@@ -412,7 +412,13 @@ Variáveis scalares podem ser números, strings ou referências para outras vari
 
 Uma variável scalar sempre começa com $, ex:
 
-    $texto = ""
+    $texto  = ""
+    $pessoa = { nome => 'Joe', idade => 20 };
+    $grupo  = [ $pessoa1, $pessoa2, $pessoa3 ];
+    $app    = Minha::App->new();
+    $numero = 20;
+
+Repare que a variável scalar faz referência a apenas 1 coisa, seja um array, um hash, string, numero, instancia, etc, mas é sempre referência a um único valor. Já as listas ( variáveis que começam com @ ) são listas de itens scalares ou seja, uma lista pode conter vários scalares.
 
 =head3 array e listas
 
