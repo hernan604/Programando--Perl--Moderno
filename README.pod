@@ -945,6 +945,71 @@ Seria o mesmo que fazer:
     #       sobrenome   "segundo"
     #   } at t.pl line 8.
 
+=head4 Referência circular com variáveis
+
+O exemplo a seguir mostra declara uma variável %a, e depois faz referência a ela mesma dentro dela mesma, e isso resulta em uma referência circular infinita. No exemplo, %a->{b} faz referência a %a. Não faz muito sentido fazer isto, mas é possível.
+
+    $ perl -e ' my %a; my $a="AAA"; my @a = ( $a,\%a); %a = ( "ex"=> \@a, "b" => \%a ); use Data::Dumper; warn Dumper %a;' 
+    $VAR1 = 'b';
+    $VAR2 = {
+              'b' => $VAR2,
+              'ex' => [
+                        'AAA',
+                        $VAR2
+                      ]
+            };
+    $VAR3 = 'ex';
+    $VAR4 = $VAR2->{'ex'};
+
+iprime valor de %a->{b}
+
+    $ perl -e ' my %a; my $a="AAA"; my @a = ( $a,\%a); %a = ( "ex"=> \@a, "b" => \%a ); use Data::Dumper; warn Dumper %a->{b};' 
+    Using a hash as a reference is deprecated at -e line 1.
+    $VAR1 = {
+              'ex' => [
+                        'AAA',
+                        $VAR1
+                      ],
+              'b' => $VAR1
+            };
+
+imprime valor de %a->{b}->{b}
+
+    $ perl -e ' my %a; my $a="AAA"; my @a = ( $a,\%a); %a = ( "ex"=> \@a, "b" => \%a ); use Data::Dumper; warn Dumper %a->{b}->{b};' 
+    Using a hash as a reference is deprecated at -e line 1.
+    $VAR1 = {
+              'b' => $VAR1,
+              'ex' => [
+                        'AAA',
+                        $VAR1
+                      ]
+            };
+
+imprime valor de %a->{b}->{b}->{b}
+
+    $ perl -e ' my %a; my $a="AAA"; my @a = ( $a,\%a); %a = ( "ex"=> \@a, "b" => \%a ); use Data::Dumper; warn Dumper %a->{b}->{b}->{b};' 
+    Using a hash as a reference is deprecated at -e line 1.
+    $VAR1 = {
+              'b' => $VAR1,
+              'ex' => [
+                        'AAA',
+                        $VAR1
+                      ]
+            };
+
+imprime valor de %a->{b}->{b}->{b}->{b}
+
+    $ perl -e ' my %a; my $a="AAA"; my @a = ( $a,\%a); %a = ( "ex"=> \@a, "b" => \%a ); use Data::Dumper; warn Dumper %a->{b}->{b}->{b}->{b};' 
+    Using a hash as a reference is deprecated at -e line 1.
+    $VAR1 = {
+              'ex' => [
+                        'AAA',
+                        $VAR1
+                      ],
+              'b' => $VAR1
+            };
+
+
 =head3 coma e Fat-coma, virgula e virgula gorda
 
 Existe a virgula e a virgula-gorda. Ambas são a mesma coisa, só muda para representação visual.
