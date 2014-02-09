@@ -250,7 +250,7 @@ Outra alternativa ao -I é usar o lib.
 
 O lib recebe uma lista de diretórios onde tem módulos que precisam ser carregados. Portanto é possível fazer algo assim:
 
-    use lib '../Modulo1/lib/','../Modulo2/lib/';
+    use lib ('../Modulo1/lib/','../Modulo2/lib/'); # use lib './lib';
     ..codigo..
 
 Resumindo, é possível passar o diretório dos módulos no momento da execução e tambem é possível setar eles junto ao código fonte usando o módulo lib.
