@@ -1340,6 +1340,13 @@ agora, vou fazer uso de alguns módulos e printar o %INC, é possível perceber 
       'strict.pm' => '/home/dev/perl5/perlbrew/perls/perl-5.17.7/lib/5.17.7/strict.pm'
     };
 
+Se souber o que está fazendo, é possível manipular o @INC. Mas isso tem que  ser feito dentro de um bloco: BEGIN {}  que precede a diretiva 'use Modulo::Nome'. 
+
+    BEGIN {
+      unshift @INC, $directory ;
+      push    @INC, $directory ;
+    }
+
 =head2 print vs warn vs say
 
     $ perldoc -f warn
