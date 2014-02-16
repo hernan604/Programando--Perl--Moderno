@@ -307,21 +307,20 @@ Métodos com orientação a objeto recebem o $self como primeiro argumento. $sel
         my ( $self, $nome ) = @_;
     }
 
-Os argumentos sempre chegam na lista @_. O @_ começa com @ portanto é uma lista. É uma variável especial que representa a lista de argumentos recebida. Então é possível criar uma lista de variáveis  equalizar com a lista recebida, isto fará cada variável conter o valor que chegou, ex: 
+Os argumentos sempre chegam na lista @_. O @_ começa com @ portanto é um array de argumentos. É uma variável especial que representa o array de argumentos recebido. Então é possível criar uma lista de variáveis  equalizar com os valores recebidos, isto fará cada variável conter o valor que chegou, ex: 
 
     
     my @argumentos = ( 'argumento_1', 'argumento_2' );
-    my ( $__arg1, $__arg2 ) = @argumentos;   # equaliza lista da esquerda com a da direita
-    warn $__arg1;   #printa o valor referente à lista da direita no momento da atribuição
-    warn $__arg2;   #printa o valor referente à lista da direita no momento da atribuição
+    my ( $__arg1, $__arg2 ) = @argumentos;   # equaliza o array da esquerda com o da direita
+    warn $__arg1;   #printa o valor referente ao array da direita no momento da atribuição
+    warn $__arg2;   #printa o valor referente ao array da direita no momento da atribuição
 
     my $metodo     = sub { 
-        my ( $arg1, $arg2 ) = @_; #equaliza a lista de argumentos de entrada (@_) com a lista da esquerda
+        my ( $arg1, $arg2 ) = @_; #equaliza o array de argumentos de entrada (@_) com o array da esquerda
         warn "ARG1: ". $arg1;   # printa o valor referente
         warn "ARG2: ". $arg2;   # printa o valor referente
     };
-    $metodo->( @argumentos ); #passa a lista como argumento
-
+    $metodo->( @argumentos ); #passa array como argumento
 
 Você não passa o $self, ele é passado automaticamente para você sempre que trabalha com orientação a objetos.
 Eu poderia chamar tanto o primeiro quanto o segundo método da segunte maneira:
@@ -368,6 +367,21 @@ e uma chamada de um objeto '$item' co método faca_algo
         ...
         $callback->( "Código executado com sucesso." );
     }
+
+Para acessar valores individuais com $_[NUMERO]:
+
+    sub faz_algo {
+        my $primeiro = $_[0];
+        my $segundo = $_[1];
+
+        warn $primeiro;
+        warn $segundo;
+    }
+
+    faz_algo( "foo", "bar" );
+    #saida
+    # foo at t.pl line 5.
+    # bar at t.pl line 6.
 
 =head3 Métodos anônimos
 
@@ -424,19 +438,25 @@ Repare que a variável scalar faz referência a apenas 1 coisa, seja um array, u
 
 Arrays e listas são muito parecidos e podem funcionar em conjunto, mas não são exatamente a mesma coisa.
 
-array é scalar (scalar é o $ cifrão ou sigíl): # e scalar é apenas uma coisa. neste caso é uma referência para um objeto do tipo ARRAY
+array scalar (scalar é o $ cifrão ou sigíl): # e scalar é apenas uma coisa. neste caso é uma referência para um objeto do tipo ARRAY
 
     $meu_array = [
         "coisa1",
         "coisa2"
     ]
 
-lista (lista é o @ arroba):
+lista (lista são os itens com os parentesis. O @ arroba é um array):
 
     @minha_lista = (
         "coisa1",
         "coisa2"
     );
+
+resumindo: 
+
+    @minha_lista                          <- array dereferenciado
+    $meu_array                            <- array referenciado
+    ( "primeiro", "segundo", $terceiro )  <- lista com 3 itens
 
 Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opção chamada "qw" que coloca os as aspas automaticamente. Mas só funciona para strings, ou números sem 'traço' ou espaços. ex:
 
@@ -521,6 +541,16 @@ Foreach loop em array. Para fazer um loop em um array, é necessário de-referen
         warn $item;
     }
 
+de-rerefenciando um array:
+
+    my @array2 = @{  $array1  };
+    use DDP; warn p @array2;
+
+referenciando um array:
+
+    my $arr = \@array2;
+    use DDP; warn p $arr;
+
 For com lista:
 
     my @l=(qw|aa bb cc|); 
@@ -600,6 +630,124 @@ grep, posso usar o grep  para filtrar os maiores de idade dentro de uma lista de
     my @maior_de_idade = grep {  $_->{ idade }  ne 'dimenor' } @pessoas;
     use DDP; warn p @maior_de_idade;
 
+=head3 Inserindo e removendo items de arrays e listas
+
+Sempre que trabalhamos com arrays, ou pilhas ou filas precisamos inserir itens no começo ou final do array, e as vezes, retirar itens do começo ou final. Os comandos para fazer isso são:
+
+    perldoc -f push
+    perldoc -f pop
+    perldoc -f shift
+    perldoc -f unshift
+
+Trabalham com o final do array
+
+    push: Insere ao final do array. perldoc -f push
+    my @array  = ( "um" , "dois" );
+    my $total = push @array, ( "tres", "quatro" );
+    use DDP; warn p @array;
+    warn $total;
+    # saida
+    #   [
+    #       [0] "um",
+    #       [1] "dois",
+    #       [2] "tres",
+    #       [3] "quatro"
+    #   ] at t.pl line 5.
+    #   4 at t.pl line 6.
+
+    pop:  Retorna e retira o último valor do array.
+    my @array  = ( "um", "dois" );
+    my $item = pop @array;
+    warn $item;
+    use DDP; warn p @array;
+    # saida
+    #   dois at t.pl line 3.
+    #   [
+    #       [0] "um"
+    #   ] at t.pl line 4.
+
+Trabalham com o início do array
+
+    shift:  Retira e retorna o primeiro item do array
+    my @array       = ( qw|um dois tres quatro| );
+    my $primeiro    = shift @array;
+    warn $primeiro;
+    use DDP; warn p @array;
+    # saida
+    #   um at t.pl line 3.
+    #   [
+    #       [0] "dois",
+    #       [1] "tres",
+    #       [2] "quatro"
+    #   ] at t.pl line 4.
+
+    my @array       = ( qw|um dois tres quatro| );
+    my $total       = unshift  @array, ("menos 1","zero");
+    use DDP; warn p @array;
+    warn $total;
+    # saida
+    #   [
+    #       [0] "menos 1",
+    #       [1] "zero",
+    #       [2] "um",
+    #       [3] "dois",
+    #       [4] "tres",
+    #       [5] "quatro"
+    #   ] at t.pl line 3.
+    #   6 at t.pl line 4.
+
+=head3 Slices
+
+    perldoc -f perldata
+
+Slices permite acessar através de um único comando muitos elementos de um array ou hash sem a necessidade de um 'for' loop. Ex:
+
+    my @pessoas = ( qw| Joao Maria Antonio José Mariana Jéssica | );
+    my ($pessoa2, $pessoa1) = @pessoas[2,1];
+        warn $pessoa2; warn $pessoa1;
+    #saida
+    #Antonio at t.pl line 4.
+    #Maria at t.pl line 4.
+    my @outros = @pessoas[2..5];
+        warn @outros;
+    #saida
+    #AntonioJoséMarianaJéssica at t.pl line 6.
+
+    my %formulario = (  
+        nome => 'João', 
+        sexo => 'Masculino' 
+    );
+    my ( $nome, $sexo ) = @formulario{"nome","sexo"};
+        warn $nome;
+        warn $sexo;
+    #saida
+    #João at t.pl line 13.
+    #Masculino at t.pl line 14.
+
+Tambem é possível setar valores usando slices
+
+    my @pessoas    = ();
+    @pessoas[1..5] = (qw|joao maria alberto francisco naldo fernando|);
+    use DDP; warn p @pessoas;
+    #saida
+    #   [
+    #       [0] undef,
+    #       [1] "joao",
+    #       [2] "maria",
+    #       [3] "alberto",
+    #       [4] "francisco",
+    #       [5] "naldo"
+    #   ] at t.pl line 4.
+
+    my %form    = ();
+    @form{'nome','sobrenome'} = ("João","da Silva");
+    #saida
+    #   {
+    #       nome        "João",
+    #       sobrenome   "da Silva"
+    #   } at t.pl line 9.
+    #   use DDP; warn p %form;
+
 =head3 Referenciando e De-referenciando
 
 Resumo: para passar a referência normalmente usa-se a \ antes da variável.  E para de-referenciar, usa-se o tipo{}, @{ $var } para de-referenciar $var em lista e %{ $var } para de-referenciar $var em lista-ordenada. É possível referenciar e dereferenciar a la vontê.
@@ -668,12 +816,21 @@ hash scalar:
         idade   => "dimenor"
     };
 
-hash com lista ordenada:
+hash com lista associativa:
 
     my %item = (
         nome    => "jão",
         idade   => "dimenor"
     );
+
+%item é um hash. 
+
+A lista associativa é:
+
+    (
+        nome    => "jão",
+        idade   => "dimenor"
+    )
 
 Para transformar um %item em $item, é só passar a referencia (\). Ou seja,
 
@@ -1489,6 +1646,19 @@ Este módulo é fantastico para trabalhar com arquivos. Além deste módulo ser 
 Veja as demais opções na documentação:
 
     $ perldoc File::Slurp
+
+=head3 Com Typeglob e filehandles
+
+perldoc -f perldata para mais informações
+  
+    sub newopen {
+        my $path = shift;
+        local *FH; # not my!
+        open (FH, $path) or return undef;
+        return *FH;
+    }
+    $fh = newopen('/etc/passwd');
+    while ( <$fh> ) { warn $_ }
 
 =head2 Construção de classes / objetos
 
