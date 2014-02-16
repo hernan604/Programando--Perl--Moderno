@@ -580,6 +580,8 @@ referenciando um array:
     my $arr = \@array2;
     use DDP; warn p $arr;
 
+=head4 Loops
+
 For com lista:
 
     my @l=(qw|aa bb cc|); 
@@ -595,7 +597,7 @@ For com array:
         warn @{$l}[$i] ;  #opção 2 para printar o valor
     }
 
-While com lista:
+While loop com lista:
 
 Tendo em vista que o while espera uma expressão, ele só vai executar se essa expressão resultar positiva. 
 Vou usar o comando shift que retira e retorna o primeiro item da lista, reduzindo a lista em menos 1 item. E quando terminar de retornar os valores, a expressão vai resultar negativo e o while não será executado.
@@ -604,6 +606,115 @@ Vou usar o comando shift que retira e retorna o primeiro item da lista, reduzind
     while ( my $item = shift @lista) { 
         warn $item        # <-- todos os comando precisam obrigatoriamente de ponto e vírgula, menos o último comando do bloco.
     }
+
+=head4 continue
+
+O while pode fazer uso de blocos continue. Sempre que o comando next é utilizado, o processamento é desviado para o bloco 'continue' se este existir, ex:
+
+    perl -e '$\="\n"; my $var = 1; while ( $var++ < 10 ) { print $var; next if $var < 7; print "primeiro" } continue { print "dentro do continue" }; print "continuando ...."'
+    2
+    dentro do continue
+    3
+    dentro do continue
+    4
+    dentro do continue
+    5
+    dentro do continue
+    6
+    dentro do continue
+    7
+    primeiro
+    dentro do continue
+    8
+    primeiro
+    dentro do continue
+    9
+    primeiro
+    dentro do continue
+    10
+    primeiro
+    dentro do continue
+    continuando ....
+
+
+=head4 last
+
+O comando last pode ser usado dentro de um while. Quando utilizado o processamento do while é abortado, podendo cair no block do continue se estiver presente:
+
+    perl -e '$\="\n"; my $var = 1; while ( $var++ < 10 ) { print $var; last if $var > 4; print "primeiro" } continue { print "dentro do continue" }; print "continuando ...."'
+    2
+    primeiro
+    dentro do continue
+    3
+    primeiro
+    dentro do continue
+    4
+    primeiro
+    dentro do continue
+    5
+    continuando ....
+
+=head4 for 
+
+    for ( var $i = 0; $i < 10; $i++ ) {
+        print $i;
+    }
+
+=head4 foreach
+
+    foreach my $fruta ( qw|maçã banana pera uva| ) {
+        print $fruta
+    }
+
+=head4 goto
+
+Com o comando goto é possível executar a partir do rótulo ou blocos rotulados, ex:
+
+    PARTE_A:{
+        warn "PARTE_A 1/3";
+        warn "PARTE_A 2/3";
+        warn "PARTE_A 3/3";
+    }
+
+    PARTE_B: {
+        warn "PARTE_B 1/3";
+        warn "PARTE_B 2/3";
+        warn "PARTE_B 3/3";
+        goto PARTE_C;
+    }
+
+
+    goto PARTE_A;
+    goto PARTE_B;
+
+
+    PARTE_C :{
+        warn "PARTE_C";
+        goto PARTE_D;
+    }
+
+    PARTE_D:
+
+    warn "PARTE_D 1/2";
+    warn "PARTE_D 2/2";
+
+    PARTE_E:
+
+    warn "PARTE_E 1/2";
+    warn "PARTE_E 2/2";
+
+    #   PARTE_A 1/3 at t.pl line 1.
+    #   PARTE_A 2/3 at t.pl line 3.
+    #   PARTE_A 3/3 at t.pl line 4.
+    #   PARTE_B 1/3 at t.pl line 8.
+    #   PARTE_B 2/3 at t.pl line 9.
+    #   PARTE_B 3/3 at t.pl line 10.
+    #   PARTE_C at t.pl line 19.
+    #   PARTE_D 1/2 at t.pl line 26.
+    #   PARTE_D 2/2 at t.pl line 27.
+    #   PARTE_E 1/2 at t.pl line 29.
+    #   PARTE_E 2/2 at t.pl line 32.
+
 
 Map, o map permite trabalhar com cada item da lista. É igual ao foreach, mas ele pode ser encadeado com outros maps ou greps pois ambos esperam uma lista como entrada e ambos retornam uma lista como resultado.
 
@@ -1142,6 +1253,44 @@ Seria o mesmo que fazer:
     #       sobrenome   "segundo"
     #   } at t.pl line 8.
 
+=head3 Juntando listas
+
+    my @lista_a = (qw|item1 item2 item3|);
+    my @lista_b = (qw| item4 item5 |);
+
+    my @tudo    = ( @lista_a, @lista_b, () );
+    use DDP ; warn p @tudo;
+    #   [
+    #       [0] "item1",
+    #       [1] "item2",
+    #       [2] "item3",
+    #       [3] "item4",
+    #       [4] "item5"
+    #   ] at t.pl line 5.
+
+=head3 Juntando hashes
+
+    my %formulario_parte_a = ( 
+        nome        => 'João',
+        sobrenome   => 'Silva'
+    );
+    my %formulario_parte_b = (
+        linguagens => [ qw|perl javascript| ],
+        ensino     => 'superior'
+    );
+
+    my %form = ( %formulario_parte_a, %formulario_parte_b );
+    use DDP ; warn p %form;
+    #   {
+    #       ensino       "superior",
+    #       linguagens   [
+    #           [0] "perl",
+    #           [1] "javascript"
+    #       ],
+    #       nome         "João",
+    #       sobrenome    "Silva"
+    #   } 
+
 =head4 Referência circular com variáveis
 
 O exemplo a seguir mostra declara uma variável %a, e depois faz referência a ela mesma dentro dela mesma, e isso resulta em uma referência circular infinita. No exemplo, %a->{b} faz referência a %a. Não faz muito sentido fazer isto, mas é possível.
@@ -1669,6 +1818,27 @@ Outra opção é mexer com a variável especial $/ ( perldoc perlvar ). O exempl
         }
     };
 
+Modos de abrir para leitura, escrita e append
+
+    open FH, "<arquivo.txt"  # abre para leitura
+    open FH, ">arquivo.txt"  # abre para escrita. irá substituir o conteúdo
+    open FH, ">>arquivo.txt" # abre para append, cola o texto ao final do arquivo
+
+Outra opção é usar o formato de 3 argumentos do comando open:
+
+    open FH, "<",  "arquivo.txt" # abre para leitura
+    open FH, ">",  "arquivo.txt" # abre para escrita. irá substituir o conteúdo
+    open FH, ">>", "arquivo.txt" # abre para append, cola o texto ao final do arquivo
+
+O comando open tambem aceita $ na variável, ex
+
+    open $FH, "<",  "arquivo.txt" # abre para leitura
+
+Para escrever no arquivo, é possível executar o comando print junto com o filehandle associado ao arquivo, ex:
+
+    print FH "Novo texto para o arquivo...";
+    print FH "Mais texto", "\ne mais e mais", "\ne mais e mais...";
+
 =head3 File::Slurp
 
 Este módulo é fantastico para trabalhar com arquivos. Além deste módulo ser muito bem recomendado, tem padrões excelentes para abrir e escrever arquivos.
@@ -1693,6 +1863,30 @@ perldoc -f perldata para mais informações
     }
     $fh = newopen('/etc/passwd');
     while ( <$fh> ) { warn $_ }
+
+=head2 Statements if, else
+
+Em perl é possível usar o if de maneira tradicional:
+
+    if ( $variavel == $valor ) {
+        ...
+    }
+
+No entanto tambem é possível usar o if ao final das expressões, ex:
+
+    sub { warn 1; warn 2; warn 3 }->() if ( 1 == 1 );
+    warn "1 é igual a 1" if ( 1 == 1 );
+    warn "1 é igual a 1" if 1 == 1;
+
+if, elsif else:
+
+    if ( 1 == 2 ) {
+        warn "if"
+    } elsif ( 2 == 2 ) {
+        warn "elsif"
+    } else { 
+        warn "else" 
+    }
 
 =head2 Construção de classes / objetos
 
