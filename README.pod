@@ -410,6 +410,35 @@ Por padrão todas as variáveis começam com $ e devem ser declaradas com 'my'. 
     my @list        = ("aa","bb",1,2,3);
     my %hash        = (nome=>"jão",idade=>"dimenor");
 
+=head3 Constantes 
+
+    use constant IP => "127.0.0.1" ;
+    warn IP ;
+    # 127.0.0.1 at t.pl line 2.
+
+    use DDP;
+    use constant NAMES => qw|joe mary|;
+    warn scalar NAMES;
+    # 2 at t.pl line 6.
+
+    foreach my $name ( NAMES ) {
+        warn $name;
+    }
+    #   joe at t.pl line 9.
+    #   mary at t.pl line 9.
+
+
+    use constant FORM => ( 
+        nome        => 'José',
+        sobrenome   =>  'da Silva'
+    );
+    my %form = FORM;
+    warn p %form;
+    #   {
+    #       nome        "José",
+    #       sobrenome   "da Silva"
+    #   }
+
 =head3 Tipos de variáveis / Estrutura de dados:
 
     my $var         = [1, 2, 3];                                # ARRAY
@@ -1024,11 +1053,12 @@ um hash
     #   } at t.pl line 119.
     
 
-=head3 Curiosidades
+=head3 Contexto
 
 Tambem é possível transformar os resultados da segunte maneira:
 
-    #primeiro vou criar uma lista 
+Primeiro vou criar um array com uma lista de palavaras:
+
     my     @palavras  = ( qw| nome primeiro sobrenome segundo idade terceiro| );
     warn p @palavras;
     #   [
@@ -1040,7 +1070,8 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       [5] "terceiro"
     #   ] at t.pl line 4.
 
-    # agora vou transformar essa lista em uma lista ordenada
+Agora é possível transformar essa lista em uma lista ordenada e acessá-la como um hash. Esta operação pode ser realizada atraves da mudança de contexto de array para hash. Para fazer isso é possível dizer que ex: %form vai receber o valor de @palavras no contexto de hash %:
+
     my     %form      = %{{@palavras}};
     warn p %form;
     #   {
@@ -1049,7 +1080,8 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       sobrenome   "segundo"
     #   } at t.pl line 8.
 
-    # agora vou transformar a lista ordenada de volta em lista
+É possível transformar de volta em array
+
     my @lista2 = %form;
     warn p @lista2;
     #   [
@@ -1060,6 +1092,8 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       [4] "idade",
     #       [5] "terceiro"
     #   ] at t.pl line 12.
+
+Outra maneira seria usar map que retorna array. Ao colocar colchetes ao redor de um array, acaba gerando um hash: { ..array...}
 
     my $form_hash = { map { $_ } @lista2 };
     warn p $form_hash;
@@ -1077,7 +1111,8 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       sobrenome   "segundo"
     #   } at t.pl line 16.
 
-    # retransforma em lista
+Retransforma em lista
+
     my @lista_3 = %{ $form_hash };
     warn p @lista_3;
     #   [
@@ -1088,7 +1123,6 @@ Tambem é possível transformar os resultados da segunte maneira:
     #       [4] "nome",
     #       [5] "primeiro"
     #   ] at t.pl line 20.
-
 
 É possível encadear comandos que usam o mesmo tipo retornado, por exemplo: 
 
