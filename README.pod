@@ -498,16 +498,16 @@ Dica, para não ter que ficar digitando aspas duplas toda hora, existe uma opç�
 
 Lembre-se, um scalar é sempre uma coisa apenas. E a lista pode ser mais de uma coisa.
 
-Então por exemplo, se chamar um método e passar uma lista para esse método, o que acontece ?
+Então por exemplo, se chamar um método e passar um array (de-referenciado) para esse método, o que acontece ?
 
-    my @l=(qw|aa bb cc|);   #LISTA
+    my @l=(qw|aa bb cc|);   #ARRAY
     my $test = sub {                            # sub é tipo function no javascript. é declaração de método. neste caso joguei o método na variável $test
         my ( $um, $dois, $tres ) = @_ ;
         warn $um;
         warn $dois;
         warn $tres;
     } ;
-    $test->( @l ); # chamada passando a lista
+    $test->( @l ); # chamada passando o array de-referenciado
 
 saida: cada item da lista caiu como um argumento. Pois a lista @l tinha 3 strings "aa" "bb" "cc".
 
@@ -517,7 +517,7 @@ saida: cada item da lista caiu como um argumento. Pois a lista @l tinha 3 string
 
 Agora, ao invés de passar a lista, vou passar um array
 
-    my $l=[qw|aa bb cc|];     #ARRAY
+    my $l=[qw|aa bb cc|];     #ARRAY ref
     my $test = sub {
     my ( $um, $dois, $tres ) = @_ ;
         warn $um;
@@ -527,13 +527,13 @@ Agora, ao invés de passar a lista, vou passar um array
     $test->( $l );
 
     #saída
-    ARRAY(0x94d4068) at -e line 1.           # recebeu o array no primeiro argumento, pois array é apenas uma coisa.
+    ARRAY(0x94d4068) at -e line 1.           # recebeu o array no primeiro argumento, pois array é uma referencia e apenas uma coisa.
     Warning: something's wrong at -e line 1. # não recebeu nada no segundo argumento
     Warning: something's wrong at -e line 1. # não recebeu nada no terceiro argumento
 
 * observe tambem o argumentos: my ($um,$dois,$tres) .. eles tambem são uma lista. Ou seja, my (...) = @_; assim como @lista = (...);
 
-Para saber o tamanho de uma lista:
+Para saber o tamanho de um array de-referenciado:
 
     my @lista = ( 1,2,3 );
     my $tamanho = @lista;
@@ -544,7 +544,7 @@ Para saber o tamanho de uma lista:
                                  # assim: $tam = scalar( @lista ); c/parentesis
     ou $tamanho = $#lista;
 
-e para arrays:
+e para array refs:
 
     my $lista = [ 1,2,3 ];
     length $lista; #3
