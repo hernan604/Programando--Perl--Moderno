@@ -66,7 +66,15 @@ E para instalar módulos com o cpanm:
 
 O local::lib é uma alternativa ao perlbrew. Esta veio muito antes do perlbrew e é altamente testada, recomendada e utilizada.
 
-  #TODO
+  curl -L http://cpanmin.us | perl - --local-lib=~/perl5 local::lib App::cpanminus && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+
+Feito isso, adicione a linha abaixo no seu ~/.bash_profile ou ~/.bashrc
+
+  eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
+
+E depois teste se a versão do perl está correta:
+
+  $ perl -v
 
 =head2 Módulos perl
 
