@@ -255,6 +255,24 @@ O lib recebe uma lista de diretórios onde tem módulos que precisam ser carrega
 
 Resumindo, é possível passar o diretório dos módulos no momento da execução e tambem é possível setar eles junto ao código fonte usando o módulo lib.
 
+=head2 shebang
+
+Shebang é a sequência de caracteres #! 
+
+O shebang do perl é normalmente:
+
+  #!/usr/bin/perl
+
+ou
+
+  #!/usr/bin/env perl
+
+A primeira opção irá executar provavelmente o perl do sistema. Já a segunda irá executar o perl de acordo com as variáveis de ambiente de usuário. Podendo não ser o perl do sistema.
+
+  #!/bin/perl-5.19.9/bin/perl -I/bin/perl-5.19.9/lib/5.19.9/ -I/bin/perl-5.19.9/lib/site_perl/5.19.9 -I/bin/stuff/lib/
+
+Conforme o exemplo acima Tambem é possível indicar os diretórios que devem ser carregados ao usar uma shebang. As vezes isto é extremamente útil. É útil pra chamar um cronjob, ou um programa que chama um script perl. emfim, pode ser útil em algumas situações.
+
 =head2 Variáveis de ambiente
 
 As variáveis de ambiente podem ser acessadas através da variável $ENV{"PATH"}. 
@@ -2048,6 +2066,40 @@ O Moo tem o básico do Moose e é compatível com Moose. Então é possível cri
     warn $p2->nome;
     warn p $p2;
 
+=head3 Bless
+
+    use strict;
+    use warnings;
+
+    package Algo;
+
+    sub new {
+        my $self  = shift;
+        my $class = ref($self) || $self;
+        return bless {}, $class;
+    }
+
+    sub alo {
+        my ( $self );
+        warn "ALOOOOOOOO\n";
+    }
+
+    sub set_palavra {
+        my ( $self ) = @_;
+        $self->{palavra} = "LLLLL";
+    }
+
+    sub get_palavra {
+        my ( $self ) = @_;
+        $self->{palavra}||"";
+    }
+
+    my $x = Algo->new();
+    $x->alo();
+    warn $x->isa( "Algo" );
+    $x->set_palavra();
+    warn $x->get_palavra();
+
 =head2 Map e Grep
 
 map e grep são dois comandinhos que rodam em cima de uma lista. Tambem podem retornar uma lista com o resultado das operações. Usados em conjunto podem ser bastante poderosos para resolver problemas comuns.
@@ -2343,6 +2395,10 @@ O exemplo a seguir mostra como printar uma lista de valores em 3 colunas usando 
                             \@cods , \@nomes,                                 \@status;
 
     warn $text;
+
+=head4 Benchmarking
+
+Good example: http://www.pal-blog.de/2014/04/18/sub_arguments_benchmark.zip
 
 =head4 manipulando arquivos excel com perl
 
