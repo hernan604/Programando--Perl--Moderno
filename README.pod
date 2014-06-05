@@ -1470,6 +1470,10 @@ Esta opção permite contar quantas matches ocorreram, e grupos nomeados
     warn $nome;
     warn $idade;
 
+A opção a seguir permite parsear uma string separada por virgula e transformar em hash
+
+    perl -e '  my $line = "xxx-XXX=\"Something one\",yyy_YY-Y=\"Something Y\",zzz-zzZZ-ZZ=\"ZZzzZZZ\""; my $object = { $line =~ m#([^,=]+)="([^"]+)"#g }; use Data::Dumper; warn Dumper $object;'
+
 =head3 Quantidade de matches
 
 Para saber a quantidade de matches de uma regex, é necessário usar o operador goatse " =()= ". 
@@ -2407,6 +2411,7 @@ O exemplo a seguir mostra como printar uma lista de valores em 3 colunas usando 
 =head4 Benchmarking
 
 Good example: http://www.pal-blog.de/2014/04/18/sub_arguments_benchmark.zip
+http://blogs.perl.org/users/leon_timmermans/2013/05/why-you-dont-need-fileslurp.html
 
 =head4 manipulando arquivos excel com perl
 
